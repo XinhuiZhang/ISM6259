@@ -86,10 +86,9 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="1" attributes="0">
-                  <EmptySpace pref="29" max="32767" attributes="0"/>
-                  <Component id="jScrollPane1" min="-2" pref="246" max="-2" attributes="0"/>
+              <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
+                  <Component id="TextMessage" pref="275" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -97,38 +96,18 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jScrollPane1" min="-2" pref="256" max="-2" attributes="0"/>
-                  <EmptySpace pref="46" max="32767" attributes="0"/>
+                  <Component id="TextMessage" min="-2" pref="51" max="-2" attributes="0"/>
+                  <EmptySpace pref="251" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
       </Layout>
       <SubComponents>
-        <Container class="javax.swing.JScrollPane" name="jScrollPane1">
-          <AuxValues>
-            <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
-          </AuxValues>
-
-          <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
-          <SubComponents>
-            <Component class="javax.swing.JTable" name="TableProject">
-              <Properties>
-                <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                  <Table columnCount="2" rowCount="2">
-                    <Column editable="false" title="Project_Name" type="java.lang.Object">
-                      <Data value="Project_A"/>
-                      <Data value="Project_B"/>
-                    </Column>
-                    <Column editable="false" title="Role" type="java.lang.Object">
-                      <Data value="Interviewer"/>
-                      <Data value="Interviewee"/>
-                    </Column>
-                  </Table>
-                </Property>
-              </Properties>
-            </Component>
-          </SubComponents>
-        </Container>
+        <Component class="javax.swing.JTextField" name="TextMessage">
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="TextMessageActionPerformed"/>
+          </Events>
+        </Component>
       </SubComponents>
     </Container>
     <Container class="javax.swing.JPanel" name="jPanel2">
@@ -152,9 +131,9 @@
                   </Group>
                   <EmptySpace min="-2" pref="28" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jTextField3" min="-2" max="-2" attributes="0"/>
-                      <Component id="jTextField1" min="-2" max="-2" attributes="0"/>
-                      <Component id="jTextField2" min="-2" max="-2" attributes="0"/>
+                      <Component id="TextPhone" min="-2" max="-2" attributes="0"/>
+                      <Component id="TextName" min="-2" max="-2" attributes="0"/>
+                      <Component id="TextEmail" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace pref="129" max="32767" attributes="0"/>
               </Group>
@@ -166,16 +145,16 @@
                   <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="jTextField1" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="TextName" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="jTextField3" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="TextPhone" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace pref="26" max="32767" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="jTextField2" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="TextEmail" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" pref="63" max="-2" attributes="0"/>
@@ -194,13 +173,13 @@
             <Property name="text" type="java.lang.String" value="Email:"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="jTextField1">
+        <Component class="javax.swing.JTextField" name="TextName">
           <Properties>
             <Property name="editable" type="boolean" value="false"/>
             <Property name="text" type="java.lang.String" value="Xinhui Zhang"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="jTextField2">
+        <Component class="javax.swing.JTextField" name="TextEmail">
           <Properties>
             <Property name="editable" type="boolean" value="false"/>
             <Property name="text" type="java.lang.String" value="xinhui.zhang@ufl.edu"/>
@@ -211,7 +190,7 @@
             <Property name="text" type="java.lang.String" value="Phone:"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="jTextField3">
+        <Component class="javax.swing.JTextField" name="TextPhone">
           <Properties>
             <Property name="editable" type="boolean" value="false"/>
             <Property name="text" type="java.lang.String" value="3527459304"/>

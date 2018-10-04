@@ -5,14 +5,24 @@
  */
 package smaple;
 
+import com.mysql.cj.util.StringUtils;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.ResultSet;
 import java.util.HashSet;
 import java.util.Set;
+import javax.swing.JOptionPane;
 
 /**
  *
  * @author zxh25
  */
-public class NewJFrame extends javax.swing.JFrame {
+public class NewJFrame extends javax.swing.JFrame implements LogIn {
+
+    Employee e;
+    room r = new room();
 
     /**
      * Creates new form NewJFrame
@@ -38,8 +48,15 @@ public class NewJFrame extends javax.swing.JFrame {
         BtnCancel = new javax.swing.JButton();
         jPasswordField1 = new javax.swing.JPasswordField();
         TextPassWord = new javax.swing.JPasswordField();
+        jLabel3 = new javax.swing.JLabel();
+        TextEID = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
+            }
+        });
 
         jLabel1.setText("UserID:");
 
@@ -62,6 +79,8 @@ public class NewJFrame extends javax.swing.JFrame {
         jPasswordField1.setText("jPasswordField1");
         jPasswordField1.setUI(null);
 
+        jLabel3.setText("EID:");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -76,11 +95,13 @@ public class NewJFrame extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jLabel2)
-                            .addComponent(jLabel1))
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel3))
                         .addGap(18, 18, 18)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(TextUserID)
-                            .addComponent(TextPassWord, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE))
+                            .addComponent(TextPassWord, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE)
+                            .addComponent(TextEID))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPasswordField1, javax.swing.GroupLayout.PREFERRED_SIZE, 6, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(51, Short.MAX_VALUE))
@@ -92,15 +113,21 @@ public class NewJFrame extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(TextUserID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(57, 57, 57)
+                .addGap(31, 31, 31)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(jPasswordField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(TextPassWord, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(79, 79, 79)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(BtnLogIn)
-                    .addComponent(BtnCancel))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPasswordField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(20, 20, 20)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addGap(64, 64, 64)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(BtnLogIn)
+                            .addComponent(BtnCancel)))
+                    .addComponent(TextEID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(97, Short.MAX_VALUE))
         );
 
@@ -124,24 +151,153 @@ public class NewJFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void BtnLogInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnLogInActionPerformed
-        // TODO add your handling code here:
-        MainPage mp = new MainPage();
-        this.setVisible(false);
-        if (TextUserID.getText().equals("001")) {
-            mp.SetRole("Interviewer");
-        } else {
-            mp.SetRole("Interviewee");
+    public int Login(String uid, char[] pass) {
+        int ravel = -1;
+        DBConnector.setMySQLConnection(uid, pass);
+        if (DBConnector.getConnection() != null) {
+            ravel = 1;
         }
-        mp.setVisible(true);
-        
-    }//GEN-LAST:event_BtnLogInActionPerformed
+        return ravel;
+    }
+    private void BtnLogInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnLogInActionPerformed
+        // Login define the role:
+        String uid = TextUserID.getText();
+        char[] pass = TextPassWord.getPassword();
+        String eid = TextEID.getText();
+        int code = Login(uid, pass);
+        if (code > 0) {
+           // Create room object
+            r=new room();
+            String sqlr = String.format("Select TimeSlots,interviewers from room where AppoinmentID is null ;");
+            try {
+                Statement sr = DBConnector.getConnection().createStatement();
+                ResultSet rsr = sr.executeQuery(sqlr);
+                while (rsr.next()) {
+                    r.addSlots(rsr.getString(1), rsr.getString(2));
+                }
+            } catch (SQLException sqle) {
+                sqle.printStackTrace();
+            }
 
+            // to query the role and person info based on the eid and create employee object
+            String sql = String.format("Select role From project WHERE eid ='%s'", eid);
+            try {
+                Statement s = DBConnector.getConnection().createStatement();
+                ResultSet rs = s.executeQuery(sql);
+                while (rs.next()) {
+                    String role = rs.getString(1);
+                    MainPage mp = new MainPage();
+                    this.setVisible(false);
+                    //create employee object
+                    if (role.equals("Interviewer")) {
+                        // <editor-fold defaultstate="collapsed" desc="Get employee info from DB and create objectfor interviewer ">
+                        String sql1 = String.format("Select * From employee WHERE eid ='%s'", eid);
+                        try {
+                            Statement s1 = DBConnector.getConnection().createStatement();
+                            ResultSet rs1 = s1.executeQuery(sql1);
+                            while (rs1.next()) {
+                                String fn = rs1.getString(2);
+                                String ln = rs1.getString(3);
+                                String email = rs1.getString(4);
+                                String phone = rs1.getString(5);
+                                //Appintment missing!
+                                Appointment[] aps = new Appointment[10];
+                                e = new Employee(fn, ln, email, phone, role, aps, eid);
+                            }
+
+                        } catch (SQLException sqle) {
+                            sqle.printStackTrace();
+                        }
+//                            get appointment info for Interviewer
+
+                        String sqlAp = String.format("Select Appointment_AppointmentID From interviewerteam WHERE  Interviewer_ERID ='%s'", eid);
+                        try {
+                            Statement s2 = DBConnector.getConnection().createStatement();
+                            ResultSet rs2 = s2.executeQuery(sqlAp);
+                            while (rs2.next()) {
+                                String apId = rs2.getString(1);
+                                if (StringUtils.isNullOrEmpty(apId)) {
+                                    break;
+                                }
+                                Appointment ap = new Appointment(apId);
+                                e.addAppointment(ap);
+                            }
+                            mp.SetEmployee(e);
+
+                        } catch (SQLException sqle) {
+                            sqle.printStackTrace();
+                        }
+                        mp.SetRoom(r);
+                        mp.setVisible(true);
+
+                        // </editor-fold>
+// Interviewee section
+                    } else {
+                        // <editor-fold defaultstate="collapsed" desc="Get employee info from DB and create object for interviewee ">
+                        String sql1 = String.format("Select * From employee WHERE eid ='%s'", eid);
+                        try {
+                            Statement s1 = DBConnector.getConnection().createStatement();
+                            ResultSet rs1 = s1.executeQuery(sql1);
+                            while (rs1.next()) {
+                                String fn = rs1.getString(2);
+                                String ln = rs1.getString(3);
+                                String email = rs1.getString(4);
+                                String phone = rs1.getString(5);
+                                Appointment[] aps = new Appointment[10];
+                                e = new Employee(fn, ln, email, phone, role, aps, eid);
+                            }
+
+                        } catch (SQLException sqle) {
+                            sqle.printStackTrace();
+                        }
+
+                        String sqlAp = String.format("Select AppoinmentID From interviewee WHERE eeid ='%s'", eid);
+                        //  Get the Appointment Info for this interviewee
+                        try {
+                            Statement s2 = DBConnector.getConnection().createStatement();
+                            ResultSet rs2 = s2.executeQuery(sqlAp);
+                            while (rs2.next()) {
+                                String apId = rs2.getString(1);
+                                if (StringUtils.isNullOrEmpty(apId)) {
+                                    break;
+                                }
+                                Appointment ap = new Appointment(apId);
+                                e.addAppointment(ap);
+                            }
+                            mp.SetEmployee(e);
+
+                        } catch (SQLException sqle) {
+                            sqle.printStackTrace();
+                        }
+
+                    }
+
+                    mp.SetRoom(r);
+                    mp.setVisible(true);
+                    break;
+                }
+
+            } catch (SQLException sqle) {
+                sqle.printStackTrace();
+            }
+        } else {
+            JOptionPane.showMessageDialog(rootPane, "Incorrect uid/password Combination. Please try again");
+        }
+
+
+    }//GEN-LAST:event_BtnLogInActionPerformed
+    // </editor-fold> 
     private void BtnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnCancelActionPerformed
         // TODO add your handling code here:
         TextUserID.setText("");
         TextPassWord.setText("");
     }//GEN-LAST:event_BtnCancelActionPerformed
+
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        // TODO add your handling code here:
+        TextUserID.setText("ISOM6259");
+        TextPassWord.setText("ISOM6259");
+    }//GEN-LAST:event_formWindowOpened
 
     /**
      * @param args the command line arguments
@@ -150,23 +306,31 @@ public class NewJFrame extends javax.swing.JFrame {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
+
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(NewJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(NewJFrame.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(NewJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(NewJFrame.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(NewJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(NewJFrame.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(NewJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(NewJFrame.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
@@ -181,10 +345,12 @@ public class NewJFrame extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BtnCancel;
     private javax.swing.JButton BtnLogIn;
+    private javax.swing.JTextField TextEID;
     private javax.swing.JPasswordField TextPassWord;
     private javax.swing.JTextField TextUserID;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPasswordField jPasswordField1;
     // End of variables declaration//GEN-END:variables

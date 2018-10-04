@@ -5,6 +5,7 @@
  */
 package smaple;
 
+import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 
@@ -13,9 +14,25 @@ import javax.swing.table.DefaultTableModel;
  * @author zxh25
  */
 public class PickTime extends javax.swing.JFrame {
+
+    private Employee e;
+
+    public void SetEmployee(Employee e) {
+        this.e = e;
+    }
+    private room r;
+
+    public void SetRoom(room r) {
+        this.r = r;
+    }
+    // attributes to pick time 
+    public int column;
+    public int row;
+    public String time;
+    //
+
     DefaultTableModel tm;
-    private String role="";
-    public void SetRole(String r){ this.role=r;}
+
     /**
      * Creates new form PickTime
      */
@@ -98,6 +115,11 @@ public class PickTime extends javax.swing.JFrame {
         );
 
         BtnConfirm.setText("Confirm");
+        BtnConfirm.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                BtnConfirmMouseClicked(evt);
+            }
+        });
         BtnConfirm.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BtnConfirmActionPerformed(evt);
@@ -148,18 +170,35 @@ public class PickTime extends javax.swing.JFrame {
     private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
         // TODO add your handling code here:
         MainPage mp = new MainPage();
-        mp.SetRole(this.role);
+        mp.SetEmployee(e);
         mp.setVisible(true);
         this.setVisible(false);
-        
+
     }//GEN-LAST:event_btnCancelActionPerformed
 
     private void TableTimeSlotsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TableTimeSlotsMouseClicked
-         // TODO add your handling code here:
-         TableTimeSlots.setRowSelectionAllowed(false);
-         tm=(DefaultTableModel)TableTimeSlots.getModel();
-         TableTimeSlots.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        // TODO add your handling code here:
+        TableTimeSlots.setRowSelectionAllowed(false);
+        TableTimeSlots.setColumnSelectionAllowed(false);
+        tm = (DefaultTableModel) TableTimeSlots.getModel();
+        TableTimeSlots.setCellSelectionEnabled(true);
+        TableTimeSlots.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        //Interviewers Upload their time avaliablity in weekly base
+        if (e.getRole().equals("Interviewer")) {
+//             int[] columns=TableTimeSlots.getSelectedColumns();
+//             int[] rows=TableTimeSlots.getSelectedRows();
+//            column = TableTimeSlots.convertColumnIndexToView( TableTimeSlots.getSelectedColumn());
+//            row = TableTimeSlots.convertRowIndexToView(TableTimeSlots.getSelectedRow());
+//            time = (String)tm.getValueAt(row, column);
+        }
+
     }//GEN-LAST:event_TableTimeSlotsMouseClicked
+
+    private void BtnConfirmMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_BtnConfirmMouseClicked
+        // The Interviewer confirm time
+//        if (e.getRole().equals("Interviewer")) {
+//            JOptionPane.showConfirmDialog(this, String.format("The time slot is %s ?", time),"Time",JOptionPane.INFORMATION_MESSAGE);}
+    }//GEN-LAST:event_BtnConfirmMouseClicked
 
     /**
      * @param args the command line arguments
@@ -175,16 +214,24 @@ public class PickTime extends javax.swing.JFrame {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
+
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(PickTime.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(PickTime.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(PickTime.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(PickTime.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(PickTime.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(PickTime.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(PickTime.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(PickTime.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 

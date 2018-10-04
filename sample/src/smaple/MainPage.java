@@ -5,14 +5,27 @@
  */
 package smaple;
 
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author zxh25
  */
 public class MainPage extends javax.swing.JFrame {
-    private String role="";
-    public void SetRole(String r){ role=r;}
+
+    private Employee e;
+
+    public void SetEmployee(Employee e) {
+        this.e = e;
+    }
     
+    private room r;
+
+    public void SetRoom(room r) {
+        this.r = r;
+    }
+
+
     /**
      * Creates new form MainPage
      */
@@ -30,15 +43,14 @@ public class MainPage extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        TableProject = new javax.swing.JTable();
+        TextMessage = new javax.swing.JTextField();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
+        TextName = new javax.swing.JTextField();
+        TextEmail = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
-        jTextField3 = new javax.swing.JTextField();
+        TextPhone = new javax.swing.JTextField();
         BtnViewMyInterviews = new javax.swing.JButton();
         BtnLogOut = new javax.swing.JButton();
         BtnUploadAvailability = new javax.swing.JButton();
@@ -54,40 +66,26 @@ public class MainPage extends javax.swing.JFrame {
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Project"));
 
-        TableProject.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {"Project_A", "Interviewer"},
-                {"Project_B", "Interviewee"}
-            },
-            new String [] {
-                "Project_Name", "Role"
-            }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
+        TextMessage.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                TextMessageActionPerformed(evt);
             }
         });
-        jScrollPane1.setViewportView(TableProject);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(29, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(TextMessage, javax.swing.GroupLayout.DEFAULT_SIZE, 275, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 256, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(46, Short.MAX_VALUE))
+                .addComponent(TextMessage, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(251, Short.MAX_VALUE))
         );
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Personal Information"));
@@ -96,16 +94,16 @@ public class MainPage extends javax.swing.JFrame {
 
         jLabel2.setText("Email:");
 
-        jTextField1.setEditable(false);
-        jTextField1.setText("Xinhui Zhang");
+        TextName.setEditable(false);
+        TextName.setText("Xinhui Zhang");
 
-        jTextField2.setEditable(false);
-        jTextField2.setText("xinhui.zhang@ufl.edu");
+        TextEmail.setEditable(false);
+        TextEmail.setText("xinhui.zhang@ufl.edu");
 
         jLabel3.setText("Phone:");
 
-        jTextField3.setEditable(false);
-        jTextField3.setText("3527459304");
+        TextPhone.setEditable(false);
+        TextPhone.setText("3527459304");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -119,9 +117,9 @@ public class MainPage extends javax.swing.JFrame {
                     .addComponent(jLabel2))
                 .addGap(28, 28, 28)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(TextPhone, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(TextName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(TextEmail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(129, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
@@ -130,14 +128,14 @@ public class MainPage extends javax.swing.JFrame {
                 .addGap(25, 25, 25)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(TextName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(TextPhone, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(TextEmail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2))
                 .addGap(63, 63, 63))
         );
@@ -222,33 +220,38 @@ public class MainPage extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void BtnLogOutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnLogOutActionPerformed
-         // TODO add your handling code here:
-         NewJFrame nf= new NewJFrame();
-         nf.setVisible(true);
-         this.setVisible(false);
-         
+        // TODO add your handling code here:
+        NewJFrame nf = new NewJFrame();
+        nf.setVisible(true);
+        this.setVisible(false);
+
     }//GEN-LAST:event_BtnLogOutActionPerformed
 
     private void BtnUploadAvailabilityActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnUploadAvailabilityActionPerformed
-         // TODO add your handling code here:
-        PickTime pt= new PickTime();
-        pt.SetRole(role);
-        pt.setVisible(true);
+        // TODO add your handling code here:
+        UploadAvailability pa = new UploadAvailability();
+        pa.SetEmployee(e);
+        pa.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_BtnUploadAvailabilityActionPerformed
 
     private void BtnPickInterviewTimeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnPickInterviewTimeActionPerformed
         // TODO add your handling code here:
-        PickTime pt= new PickTime();
-        pt.SetRole(role);
-        pt.setVisible(true);
+       if (e.getAppointments()[0]== null){
+        ChooseInterviewTime cit = new ChooseInterviewTime();
+        cit.SetEmployee(e);
+        cit.SetRoom(r);
+        cit.setVisible(true);
         this.setVisible(false);
+       }else{
+       JOptionPane.showMessageDialog(this, "You already schedule a interview,Please check the interview list", "Warning", JOptionPane.WARNING_MESSAGE);
+       }
     }//GEN-LAST:event_BtnPickInterviewTimeActionPerformed
 
     private void BtnViewMyInterviewsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnViewMyInterviewsActionPerformed
         // TODO add your handling code here:
-        InterviewList il= new InterviewList();
-        il.SetRole(role);
+        InterviewList il = new InterviewList();
+        il.SetEmployee(e);
         il.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_BtnViewMyInterviewsActionPerformed
@@ -258,15 +261,26 @@ public class MainPage extends javax.swing.JFrame {
     }//GEN-LAST:event_BtnCreateInterviewsActionPerformed
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
-         // TODO add your handling code here:
-         if(role.equals("Interviewer")){
-         BtnPickInterviewTime.setVisible(false);
-         }else{
-         BtnCreateInterviews.setVisible(false);
-         BtnUploadAvailability.setVisible(false);
-         }
-         
+        // TODO add your handling code here:
+        TextName.setText(e.getLname() + " " + e.getFname());
+        TextPhone.setText(e.getPhone());
+        TextEmail.setText(e.getEmail());
+        if ((e.getRole()).equals("Interviewer")) {
+            BtnPickInterviewTime.setVisible(false);
+        } else {
+            BtnCreateInterviews.setVisible(false);
+            BtnUploadAvailability.setVisible(false);
+            if (e.getAppointments()[0]==null) {
+                TextMessage.setEditable(false);
+                TextMessage.setText("You have an interview needs to be scheduled");
+            }
+        }
+
     }//GEN-LAST:event_formWindowOpened
+
+    private void TextMessageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TextMessageActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_TextMessageActionPerformed
 
     /**
      * @param args the command line arguments
@@ -309,15 +323,14 @@ public class MainPage extends javax.swing.JFrame {
     private javax.swing.JButton BtnPickInterviewTime;
     private javax.swing.JButton BtnUploadAvailability;
     private javax.swing.JButton BtnViewMyInterviews;
-    private javax.swing.JTable TableProject;
+    private javax.swing.JTextField TextEmail;
+    private javax.swing.JTextField TextMessage;
+    private javax.swing.JTextField TextName;
+    private javax.swing.JTextField TextPhone;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
     // End of variables declaration//GEN-END:variables
 }

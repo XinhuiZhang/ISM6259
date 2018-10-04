@@ -5,13 +5,29 @@
  */
 package smaple;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import javax.swing.DefaultListModel;
+
 /**
  *
  * @author zxh25
  */
 public class InterviewList extends javax.swing.JFrame {
-    private String role="";
-    public void SetRole(String r){ role=r;}
+
+    private Employee e;
+
+    public void SetEmployee(Employee e) {
+        this.e = e;
+    }
+    private room r;
+
+    public void SetRoom(room r) {
+        this.r = r;
+    }
+    DefaultListModel<String> listModelInterviews = new DefaultListModel<>();
+
     /**
      * Creates new form InterviewList
      */
@@ -29,11 +45,11 @@ public class InterviewList extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
         BtnCancelInterview = new javax.swing.JButton();
         BtnInterviewDocumentation = new javax.swing.JButton();
         BtnBack = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        ListInterviews = new javax.swing.JList<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -43,25 +59,6 @@ public class InterviewList extends javax.swing.JFrame {
         });
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("ListOfInterviews"));
-
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {"Project_A", "Kevin", "4:00PM-4:30PM", "09/12/2018", "Interviewer"},
-                {"Project_B", "Shriya", "10:00AM-10:30AM", "09/12/2018", "Interviewee"}
-            },
-            new String [] {
-                "Project_ID", "Interview With", "Time", "Date", "Role"
-            }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false, false
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        jScrollPane1.setViewportView(jTable1);
 
         BtnCancelInterview.setText("Cancel Interview");
 
@@ -79,28 +76,30 @@ public class InterviewList extends javax.swing.JFrame {
             }
         });
 
+        jScrollPane2.setViewportView(ListInterviews);
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1))
-            .addGroup(jPanel1Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addGap(47, 47, 47)
-                .addComponent(BtnCancelInterview)
-                .addGap(28, 28, 28)
-                .addComponent(BtnBack)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 33, Short.MAX_VALUE)
-                .addComponent(BtnInterviewDocumentation)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane2)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(BtnCancelInterview)
+                        .addGap(28, 28, 28)
+                        .addComponent(BtnBack)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 33, Short.MAX_VALUE)
+                        .addComponent(BtnInterviewDocumentation)))
                 .addGap(40, 40, 40))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(24, 24, 24)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 55, Short.MAX_VALUE)
+                .addGap(33, 33, 33)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 396, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 81, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(BtnCancelInterview)
                     .addComponent(BtnInterviewDocumentation)
@@ -135,17 +134,39 @@ public class InterviewList extends javax.swing.JFrame {
     private void BtnBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnBackActionPerformed
         // TODO add your handling code here:
         MainPage mp = new MainPage();
-        mp.SetRole(role);
+        mp.SetEmployee(e);
         mp.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_BtnBackActionPerformed
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
-         // TODO add your handling code here:
-         if(role.equals("Interviewer")){
-         }else{
-         BtnInterviewDocumentation.setVisible(false);
-         }
+        // TODO add your handling code here:
+        for (int i = 0; i < e.getAppointments().length; i++) {
+            if (e.getAppointments()[i] == null) {
+                break;
+            } else {
+                String sql = String.format("Select TimeSlots from room where AppoinmentID =%s;", e.getAppointments()[i].getAppointmentID());
+                try {
+                    Statement s = DBConnector.getConnection().createStatement();
+                    ResultSet rs = s.executeQuery(sql);
+                    while (rs.next()) {
+                        String InterviewTime = rs.getString(1);
+                        listModelInterviews.addElement(InterviewTime);
+                    }
+                } catch (SQLException sqle) {
+                    sqle.printStackTrace();
+                }
+
+            }
+
+        }
+        ListInterviews.setModel(listModelInterviews);
+        if (e.getRole().equals("Interviewer")) {
+        } else {
+            BtnInterviewDocumentation.setVisible(false);
+        }
+
+
     }//GEN-LAST:event_formWindowOpened
 
     /**
@@ -187,8 +208,8 @@ public class InterviewList extends javax.swing.JFrame {
     private javax.swing.JButton BtnBack;
     private javax.swing.JButton BtnCancelInterview;
     private javax.swing.JButton BtnInterviewDocumentation;
+    private javax.swing.JList<String> ListInterviews;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
+    private javax.swing.JScrollPane jScrollPane2;
     // End of variables declaration//GEN-END:variables
 }
