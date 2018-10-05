@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -17,7 +18,6 @@ import java.util.ArrayList;
  */
 public class Employee {
 
-    private ArrayList<Appointment> appointment = new ArrayList<>();
     private String fname;
     private String lname;
     private String email;
@@ -128,6 +128,15 @@ public class Employee {
 
         appointments.add(ap);
     }
-;
+
+    public void deleteAppointment(String apid) {
+        for (int i = 0; i < appointments.size(); i++) {
+            if (appointments.get(i).getAppointmentID().equals(apid)) {
+               appointments.remove(i);
+                
+            }
+        }
+
+    }
 
 }

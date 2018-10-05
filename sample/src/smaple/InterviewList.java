@@ -5,25 +5,29 @@
  */
 package smaple;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
 
 /**
  *
  * @author zxh25
  */
 public class InterviewList extends javax.swing.JFrame {
-    
+
     private Employee e;
-    
+
     public void SetEmployee(Employee e) {
         this.e = e;
     }
     private room r;
-    
+
     public void SetRoom(room r) {
         this.r = r;
     }
@@ -62,6 +66,11 @@ public class InterviewList extends javax.swing.JFrame {
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("ListOfInterviews"));
 
         BtnCancelInterview.setText("Cancel Interview");
+        BtnCancelInterview.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BtnCancelInterviewActionPerformed(evt);
+            }
+        });
 
         BtnInterviewDocumentation.setText("Interview Documentation");
         BtnInterviewDocumentation.addActionListener(new java.awt.event.ActionListener() {
@@ -136,6 +145,7 @@ public class InterviewList extends javax.swing.JFrame {
         // TODO add your handling code here:
         MainPage mp = new MainPage();
         mp.SetEmployee(e);
+        mp.SetRoom(r);
         mp.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_BtnBackActionPerformed
@@ -152,9 +162,61 @@ public class InterviewList extends javax.swing.JFrame {
         } else {
             BtnInterviewDocumentation.setVisible(false);
         }
-        
+
 
     }//GEN-LAST:event_formWindowOpened
+
+    private void BtnCancelInterviewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnCancelInterviewActionPerformed
+        // TODO add your handling code here:
+        int resp = JOptionPane.showConfirmDialog(this, "Are you sure you want to cancel?", "Confirm Cancellation", JOptionPane.YES_NO_OPTION);
+        if (resp == JOptionPane.YES_OPTION) {
+            String selectedTimeSlot = ListInterviews.getSelectedValue();
+            int selectedIndex = ListInterviews.getSelectedIndex();
+            String EeID = "";
+            String ApID = "";
+
+            String sqlx = String.format("select interviewee.EEID,appointment.AppointmentID\n"
+                    + "from interviewee,appointment,room \n"
+                    + "where interviewee.AppoinmentID=appointment.AppointmentID\n"
+                    + "and appointment.AppointmentID=room.AppoinmentID\n"
+                    + "and  room.TimeSlots= '%s' ;", selectedTimeSlot);
+            try {
+                Statement s = DBConnector.getConnection().createStatement();
+                ResultSet rs = s.executeQuery(sqlx);
+                while (rs.next()) {
+                    EeID = rs.getString(1);
+                    ApID = rs.getString(2);
+
+                }
+            } catch (SQLException sqle) {
+                sqle.printStackTrace();
+            }
+
+            String[] sql = new String[4];
+            sql[0] = String.format("update interviewee set AppoinmentID=null where EEID='%s';", EeID);
+            sql[1] = String.format("update room  set AppoinmentID=null where TimeSlots= '%s' ;", selectedTimeSlot);
+            sql[2] = String.format("delete from interviewerteam where Appointment_AppointmentID='%s';", ApID);
+            sql[3] = String.format("delete from appointment where AppointmentID='%s';", ApID);
+            Connection cnn = DBConnector.getConnection();
+            try {
+                Statement s = cnn.createStatement();
+                cnn.setAutoCommit(false);
+                for (int i = 0; i < sql.length; i++) {
+                    s.executeUpdate(sql[i]);
+                }
+                cnn.commit();
+            } catch (SQLException sqle) {
+                try {
+                    cnn.rollback();
+                } catch (SQLException ex) {
+                    Logger.getLogger(InterviewList.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                sqle.printStackTrace();
+            }
+            listModelInterviews.remove(selectedIndex);
+            e.deleteAppointment(ApID);
+        }
+    }//GEN-LAST:event_BtnCancelInterviewActionPerformed
 
     /**
      * @param args the command line arguments

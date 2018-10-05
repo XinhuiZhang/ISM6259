@@ -145,7 +145,7 @@
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel2">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Please input your available time slot (type in the date in the format&quot;2001/10/12&quot;)  "/>
+            <Property name="text" type="java.lang.String" value="Please enter your availability (Date in format &quot;yyyy/mm/dd&quot;)  "/>
           </Properties>
         </Component>
         <Component class="javax.swing.JComboBox" name="CoBoStartTime">

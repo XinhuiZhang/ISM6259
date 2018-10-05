@@ -12,6 +12,15 @@ package smaple;
 public class Appointment {
 
     private String appointmentID;
+    private String appTime;
+    
+    public String getAppTime(){
+        return appTime;
+    }
+    
+    public void setAppTime(String date){
+        appTime = date;
+    }
 
     public String getAppointmentID() {
         return appointmentID;
@@ -21,8 +30,9 @@ public class Appointment {
         this.appointmentID = s;
     }
     public Appointment(){}
-    public Appointment(String aid){
+    public Appointment(String aid, String at){
     this.appointmentID=aid;
+    this.appTime=at;
     }
 
 }

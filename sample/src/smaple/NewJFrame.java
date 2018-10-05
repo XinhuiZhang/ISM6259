@@ -167,8 +167,8 @@ public class NewJFrame extends javax.swing.JFrame implements LogIn {
         String eid = TextEID.getText();
         int code = Login(uid, pass);
         if (code > 0) {
-           // Create room object
-            r=new room();
+            // Create room object
+            r = new room();
             String sqlr = String.format("Select TimeSlots,interviewers from room where AppoinmentID is null ;");
             try {
                 Statement sr = DBConnector.getConnection().createStatement();
@@ -202,7 +202,7 @@ public class NewJFrame extends javax.swing.JFrame implements LogIn {
                                 String email = rs1.getString(4);
                                 String phone = rs1.getString(5);
                                 //Appintment missing!
-                                ArrayList<Appointment> aps=new ArrayList<>();
+                                ArrayList<Appointment> aps = new ArrayList<>();
                                 e = new Employee(fn, ln, email, phone, role, aps, eid);
                             }
 
@@ -215,12 +215,25 @@ public class NewJFrame extends javax.swing.JFrame implements LogIn {
                         try {
                             Statement s2 = DBConnector.getConnection().createStatement();
                             ResultSet rs2 = s2.executeQuery(sqlAp);
+                            String AppointmentTime = "";
                             while (rs2.next()) {
                                 String apId = rs2.getString(1);
                                 if (StringUtils.isNullOrEmpty(apId)) {
                                     break;
                                 }
-                                Appointment ap = new Appointment(apId);
+
+                                String sqlz = String.format("select room.TimeSlots from room where room.AppoinmentID='%s';", apId);
+                                try {
+                                    Statement sz = DBConnector.getConnection().createStatement();
+                                    ResultSet rsz = sz.executeQuery(sqlz);
+                                    while (rsz.next()) {
+                                        AppointmentTime = rsz.getString(1);
+                                    }
+                                } catch (SQLException sqle) {
+                                    sqle.printStackTrace();
+                                }
+
+                                Appointment ap = new Appointment(apId, AppointmentTime);
                                 e.addAppointment(ap);
                             }
                             mp.SetEmployee(e);
@@ -244,7 +257,7 @@ public class NewJFrame extends javax.swing.JFrame implements LogIn {
                                 String ln = rs1.getString(3);
                                 String email = rs1.getString(4);
                                 String phone = rs1.getString(5);
-                                ArrayList<Appointment> aps =new ArrayList<>(); 
+                                ArrayList<Appointment> aps = new ArrayList<>();
                                 e = new Employee(fn, ln, email, phone, role, aps, eid);
                             }
 
@@ -257,12 +270,23 @@ public class NewJFrame extends javax.swing.JFrame implements LogIn {
                         try {
                             Statement s2 = DBConnector.getConnection().createStatement();
                             ResultSet rs2 = s2.executeQuery(sqlAp);
+                            String AppointmentTime = "";
                             while (rs2.next()) {
                                 String apId = rs2.getString(1);
                                 if (StringUtils.isNullOrEmpty(apId)) {
                                     break;
                                 }
-                                Appointment ap = new Appointment(apId);
+                                String sqlz = String.format("select room.TimeSlots from room where room.AppoinmentID='%s';", apId);
+                                try {
+                                    Statement sz = DBConnector.getConnection().createStatement();
+                                    ResultSet rsz = sz.executeQuery(sqlz);
+                                    while (rsz.next()) {
+                                        AppointmentTime = rsz.getString(1);
+                                    }
+                                } catch (SQLException sqle) {
+                                    sqle.printStackTrace();
+                                }
+                                Appointment ap = new Appointment(apId,AppointmentTime);
                                 e.addAppointment(ap);
                             }
                             mp.SetEmployee(e);

@@ -18,13 +18,12 @@ public class MainPage extends javax.swing.JFrame {
     public void SetEmployee(Employee e) {
         this.e = e;
     }
-    
+
     private room r;
 
     public void SetRoom(room r) {
         this.r = r;
     }
-
 
     /**
      * Creates new form MainPage
@@ -76,16 +75,14 @@ public class MainPage extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(TextMessage, javax.swing.GroupLayout.DEFAULT_SIZE, 275, Short.MAX_VALUE))
+            .addComponent(TextMessage, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 287, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(TextMessage, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(251, Short.MAX_VALUE))
+                .addComponent(TextMessage, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(243, Short.MAX_VALUE))
         );
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Personal Information"));
@@ -231,27 +228,29 @@ public class MainPage extends javax.swing.JFrame {
         // TODO add your handling code here:
         UploadAvailability pa = new UploadAvailability();
         pa.SetEmployee(e);
+        pa.SetRoom(r);
         pa.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_BtnUploadAvailabilityActionPerformed
 
     private void BtnPickInterviewTimeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnPickInterviewTimeActionPerformed
         // TODO add your handling code here:
-       if (e.getAppointments().size()== 0){
-        ChooseInterviewTime cit = new ChooseInterviewTime();
-        cit.SetEmployee(e);
-        cit.SetRoom(r);
-        cit.setVisible(true);
-        this.setVisible(false);
-       }else{
-       JOptionPane.showMessageDialog(this, "You already schedule a interview,Please check the interview list", "Warning", JOptionPane.WARNING_MESSAGE);
-       }
+        if (e.getAppointments().size() == 0) {
+            ChooseInterviewTime cit = new ChooseInterviewTime();
+            cit.SetEmployee(e);
+            cit.SetRoom(r);
+            cit.setVisible(true);
+            this.setVisible(false);
+        } else {
+            JOptionPane.showMessageDialog(this, "You already schedule a interview,Please check the interview list", "Warning", JOptionPane.WARNING_MESSAGE);
+        }
     }//GEN-LAST:event_BtnPickInterviewTimeActionPerformed
 
     private void BtnViewMyInterviewsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnViewMyInterviewsActionPerformed
         // TODO add your handling code here:
         InterviewList il = new InterviewList();
         il.SetEmployee(e);
+        il.SetRoom(r);
         il.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_BtnViewMyInterviewsActionPerformed
@@ -267,12 +266,19 @@ public class MainPage extends javax.swing.JFrame {
         TextEmail.setText(e.getEmail());
         if ((e.getRole()).equals("Interviewer")) {
             BtnPickInterviewTime.setVisible(false);
+            String appMsg = String.format("You have %d interview(s) scheduled.", e.getAppointments().size());
+            TextMessage.setText(appMsg);
+            TextMessage.setEditable(false);
         } else {
             BtnCreateInterviews.setVisible(false);
             BtnUploadAvailability.setVisible(false);
-            if (e.getAppointments().size()==0) {
+            if (e.getAppointments().size() == 0) {
                 TextMessage.setEditable(false);
-                TextMessage.setText("You have an interview needs to be scheduled");
+                TextMessage.setText("You have an interview that needs to be scheduled");
+            } else {
+                String appMsg = String.format("You have %d interview(s) scheduled.", e.getAppointments().size());
+                TextMessage.setText(appMsg);
+                TextMessage.setEditable(false);
             }
         }
 

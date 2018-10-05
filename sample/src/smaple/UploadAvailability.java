@@ -21,6 +21,11 @@ public class UploadAvailability extends javax.swing.JFrame {
     public void SetEmployee(Employee e) {
         this.e = e;
     }
+        private room r;
+
+    public void SetRoom(room r) {
+        this.r = r;
+    }
 
     /**
      * Creates new form UploadAvailability
@@ -87,7 +92,7 @@ public class UploadAvailability extends javax.swing.JFrame {
             }
         });
 
-        jLabel2.setText("Please input your available time slot (type in the date in the format\"2001/10/12\")  ");
+        jLabel2.setText("Please enter your availability (Date in format \"yyyy/mm/dd\")  ");
 
         CoBoStartTime.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "09:00AM", "09:30AM", "10:00AM", "10:30AM", "11:00AM", "11:30AM", "12:00PM", "12:30PM", "01:00PM", "01:30PM", "02:00PM", "02:30PM", "03:00PM", "03:30PM", "04:00PM", "04:30PM" }));
         CoBoStartTime.addActionListener(new java.awt.event.ActionListener() {
@@ -192,31 +197,41 @@ public class UploadAvailability extends javax.swing.JFrame {
 
     private void BtnConfirmMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_BtnConfirmMouseClicked
         // Read the startTime from comboBox and calculate endTime
-        if (CoBoStartTime.getSelectedIndex() >= 0 && !(TextDate.getText().equals(""))) {
+        String date = TextDate.getText(); //change textDate
+        if(
+                (date.length()==10)&&
+                (date.substring(4,5).equals("/"))&&
+                (date.substring(7,8).equals("/"))&&
+                (Integer.parseInt(date.substring(0,4))>=2018)&&
+                (Integer.parseInt(date.substring(5,7))<=12)&&
+                (Integer.parseInt(date.substring(8))<=31)
+                ){
+        if (CoBoStartTime.getSelectedIndex() >= 0 && !(TextDate.getText().equals(""))) { //change textDTE
             String startTime = (String) CoBoStartTime.getSelectedItem();
             int hour = Integer.parseInt(startTime.substring(0, 2));
-            int minute = Integer.parseInt(startTime.substring(3, 5));
-            if (minute == 30) {
-                minute = 0;
+            String minute = startTime.substring(3, 5);
+            if (minute.equals("30")) {
+                minute = "00";
                 hour += 1;
                 if (hour > 12) {
                     hour -= 12;
                 }
             } else {
-                minute += 30;
+                minute = "30";
             }
             String endTime;
-            if (hour > 9) {
-                endTime = String.format("%d:%d AM", hour, minute);
+            if (hour >= 9) {
+                endTime = String.format("%d:%s AM", hour, minute);
                 if (hour == 12) {
-                    endTime = String.format("%d:%d PM", hour, minute);
+                    endTime = String.format("%d:%s PM", hour, minute);
                 }
             } else {
-                endTime = String.format("%d:%d PM", hour, minute);
+                endTime = String.format("%d:%s PM", hour, minute);
             }
             TextEndTime.setText(endTime);
-            String timeSlot = String.format("%s %s-%s", TextDate.getText(), startTime, endTime);
-            JOptionPane.showConfirmDialog(this, String.format("The time slot is %s ?", timeSlot), "Confirm Time Slot", JOptionPane.INFORMATION_MESSAGE);
+            String timeSlot = String.format("%s %s-%s", TextDate.getText(), startTime, endTime); //change textDate to new tbx
+            int timeConfirm = JOptionPane.showConfirmDialog(this, String.format("The time slot is %s ?", timeSlot), "Confirm Time Slot", JOptionPane.YES_NO_OPTION);
+            if(timeConfirm==JOptionPane.YES_OPTION){
             String sql = String.format("insert into room values\n" + "(\"%s\",null,\"%s\");", timeSlot, e.getId());
             try {
                 Statement s = DBConnector.getConnection().createStatement();
@@ -225,8 +240,15 @@ public class UploadAvailability extends javax.swing.JFrame {
                 sqle.printStackTrace();
             }
             JOptionPane.showConfirmDialog(this, "Upload successfully", "Transaction",JOptionPane.DEFAULT_OPTION,JOptionPane.PLAIN_MESSAGE);
+        }
         } else {
             JOptionPane.showMessageDialog(this, "Please Fill the date and select start time", "Warning", JOptionPane.WARNING_MESSAGE);
+        }
+        }
+        else {
+            JOptionPane.showMessageDialog(this, "Please enter a valid date.", "Warning", JOptionPane.WARNING_MESSAGE);
+            TextDate.setText("");
+            TextDate.requestFocus();
         }
 
     }//GEN-LAST:event_BtnConfirmMouseClicked
