@@ -11,6 +11,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import javax.swing.JOptionPane;
@@ -201,7 +202,7 @@ public class NewJFrame extends javax.swing.JFrame implements LogIn {
                                 String email = rs1.getString(4);
                                 String phone = rs1.getString(5);
                                 //Appintment missing!
-                                Appointment[] aps = new Appointment[10];
+                                ArrayList<Appointment> aps=new ArrayList<>();
                                 e = new Employee(fn, ln, email, phone, role, aps, eid);
                             }
 
@@ -243,7 +244,7 @@ public class NewJFrame extends javax.swing.JFrame implements LogIn {
                                 String ln = rs1.getString(3);
                                 String email = rs1.getString(4);
                                 String phone = rs1.getString(5);
-                                Appointment[] aps = new Appointment[10];
+                                ArrayList<Appointment> aps =new ArrayList<>(); 
                                 e = new Employee(fn, ln, email, phone, role, aps, eid);
                             }
 

@@ -8,6 +8,7 @@ package smaple;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import javax.swing.DefaultListModel;
 
 /**
@@ -15,14 +16,14 @@ import javax.swing.DefaultListModel;
  * @author zxh25
  */
 public class InterviewList extends javax.swing.JFrame {
-
+    
     private Employee e;
-
+    
     public void SetEmployee(Employee e) {
         this.e = e;
     }
     private room r;
-
+    
     public void SetRoom(room r) {
         this.r = r;
     }
@@ -141,31 +142,17 @@ public class InterviewList extends javax.swing.JFrame {
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         // TODO add your handling code here:
-        for (int i = 0; i < e.getAppointments().length; i++) {
-            if (e.getAppointments()[i] == null) {
-                break;
-            } else {
-                String sql = String.format("Select TimeSlots from room where AppoinmentID =%s;", e.getAppointments()[i].getAppointmentID());
-                try {
-                    Statement s = DBConnector.getConnection().createStatement();
-                    ResultSet rs = s.executeQuery(sql);
-                    while (rs.next()) {
-                        String InterviewTime = rs.getString(1);
-                        listModelInterviews.addElement(InterviewTime);
-                    }
-                } catch (SQLException sqle) {
-                    sqle.printStackTrace();
-                }
 
-            }
-
+        ArrayList<String> lstOfInterviews = e.viewSchedule();
+        for (int i = 0; i < lstOfInterviews.size(); i++) {
+            listModelInterviews.addElement(lstOfInterviews.get(i));
         }
         ListInterviews.setModel(listModelInterviews);
         if (e.getRole().equals("Interviewer")) {
         } else {
             BtnInterviewDocumentation.setVisible(false);
         }
-
+        
 
     }//GEN-LAST:event_formWindowOpened
 

@@ -5,8 +5,13 @@
  */
 package smaple;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 
@@ -26,7 +31,7 @@ public class ChooseInterviewTime extends javax.swing.JFrame {
     public void SetRoom(room r) {
         this.r = r;
     }
-    private static int AppoinmentID =0;
+    private static int AppoinmentID ;
     DefaultListModel<String> listModelTimeSlots = new DefaultListModel<>();
 
     /**
@@ -128,11 +133,12 @@ public class ChooseInterviewTime extends javax.swing.JFrame {
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         // TODO add your handling code here:
-        for (int i = 0; i < r.timeSlots.length; i++) {
-            if (r.timeSlots[i] != null) {
-                listModelTimeSlots.addElement(r.timeSlots[i]);
-            }
+
+        ArrayList<String> timeSlots = r.showTimeSlots();
+        for (int i = 0; i < timeSlots.size(); i++) {
+            listModelTimeSlots.addElement(r.timeSlots.get(i));
         }
+
         ListTimeSlots.setModel(listModelTimeSlots);
     }//GEN-LAST:event_formWindowOpened
 
@@ -140,6 +146,7 @@ public class ChooseInterviewTime extends javax.swing.JFrame {
         // TODO add your handling code here:
         MainPage mp = new MainPage();
         mp.SetEmployee(e);
+        mp.SetRoom(r);
         mp.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_BtnBackActionPerformed
@@ -147,22 +154,43 @@ public class ChooseInterviewTime extends javax.swing.JFrame {
     private void BtnConfirmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnConfirmActionPerformed
         // TODO add your handling code here:
         String selectedTimeSlot = ListTimeSlots.getSelectedValue();
-        int selectedTimeSlotIndex=ListTimeSlots.getSelectedIndex();
+        int selectedTimeSlotIndex = ListTimeSlots.getSelectedIndex();
+        String ErID = "";
         JOptionPane.showConfirmDialog(this, String.format("The time slot is %s ?", selectedTimeSlot), "Confirm Time Slot", JOptionPane.INFORMATION_MESSAGE);
-        String sql_room=String.format("update room set room.AppoinmentID=\"%d\" where TimeSlots=\"%s\";",AppoinmentID,selectedTimeSlot);
-        String sql_appointment = String.format("insert into Appointment values(\"%d\")", AppoinmentID);
-        String sql_interviewee=String.format("insert into interviewee values(\"%s\",\"%d\")", e.getId(),AppoinmentID);
-        String sql_InterviewerTeam=String.format("insert into interviewerTeam values(\"%s\",\"%s\")", r.timeSlots[selectedTimeSlotIndex],AppoinmentID);;
+
+        String sqlx = String.format("Select Interviewers from room where TimeSlots ='%s';", r.timeSlots.get(selectedTimeSlotIndex));
         try {
             Statement s = DBConnector.getConnection().createStatement();
-            s.executeUpdate(sql_room);
-            s.executeUpdate(sql_appointment);
-            s.executeUpdate(sql_interviewee);
-            s.executeUpdate(sql_InterviewerTeam);
+            ResultSet rs = s.executeQuery(sqlx);
+            while (rs.next()) {
+                ErID = rs.getString(1);
+            }
         } catch (SQLException sqle) {
             sqle.printStackTrace();
         }
-        Appointment apt= new Appointment(Integer.toString(AppoinmentID));
+
+        String[] sql = new String[4];
+        sql[0] = String.format("update room set room.AppoinmentID='%d' where TimeSlots='%s';", AppoinmentID, selectedTimeSlot);
+        sql[1] = String.format("insert into Appointment values('%d')", AppoinmentID);
+        sql[2] = String.format("update interviewee set AppoinmentID='%s' where EEID='%s';", AppoinmentID,e.getId());
+        sql[3] = String.format("insert into interviewerTeam values('%s','%s')", ErID, AppoinmentID);
+        Connection cnn = DBConnector.getConnection();
+        try {
+            Statement s = cnn.createStatement();
+            cnn.setAutoCommit(false);
+            for (int i = 0; i < sql.length; i++) {
+                s.executeUpdate(sql[i]);
+            }
+            cnn.commit();
+        } catch (SQLException sqle) {
+            try {
+                cnn.rollback();
+            } catch (SQLException ex) {
+                Logger.getLogger(ChooseInterviewTime.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            sqle.printStackTrace();
+        }
+        Appointment apt = new Appointment(Integer.toString(AppoinmentID));
         e.addAppointment(apt);
     }//GEN-LAST:event_BtnConfirmActionPerformed
 

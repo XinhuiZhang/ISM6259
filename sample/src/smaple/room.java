@@ -5,24 +5,27 @@
  */
 package smaple;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author zxh25
  */
 public class room {
 
-    public String[] timeSlots = new String[10];
-    public String[] ErID= new String[10];
+    public ArrayList<String> timeSlots = new ArrayList<>();
+    public ArrayList<String> ErID = new ArrayList<>();
 
-    public void addSlots(String ts,String er) {
-        for (int i = 0; i < 10; i++) {
-            if (this.timeSlots[i]==null) {
-                timeSlots[i] = ts;
-                ErID[i]=er;
-                break;
-            }
-        }
-
+    public void addSlots(String ts, String er) {
+        timeSlots.add(ts);
+        ErID.add(er);
     }
 
+    public ArrayList<String> showTimeSlots() {
+        ArrayList<String> LstimeSlot = new ArrayList<>();
+        for (int i = 0; i < timeSlots.size(); i++) {
+            LstimeSlot.add(timeSlots.get(i));
+        }
+        return LstimeSlot;
+    }
 }

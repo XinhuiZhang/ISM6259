@@ -237,7 +237,7 @@ public class MainPage extends javax.swing.JFrame {
 
     private void BtnPickInterviewTimeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnPickInterviewTimeActionPerformed
         // TODO add your handling code here:
-       if (e.getAppointments()[0]== null){
+       if (e.getAppointments().size()== 0){
         ChooseInterviewTime cit = new ChooseInterviewTime();
         cit.SetEmployee(e);
         cit.SetRoom(r);
@@ -270,7 +270,7 @@ public class MainPage extends javax.swing.JFrame {
         } else {
             BtnCreateInterviews.setVisible(false);
             BtnUploadAvailability.setVisible(false);
-            if (e.getAppointments()[0]==null) {
+            if (e.getAppointments().size()==0) {
                 TextMessage.setEditable(false);
                 TextMessage.setText("You have an interview needs to be scheduled");
             }

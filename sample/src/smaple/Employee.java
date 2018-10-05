@@ -6,6 +6,9 @@
 package smaple;
 
 import java.awt.List;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 /**
@@ -21,13 +24,13 @@ public class Employee {
     private String phone;
     private String role;
     private String id;
-    private Appointment[] appointments = new Appointment[10];
-    //private  ArrayList<Appointment>() appointments =new ArrayList<>(); 
+    //private Appointment[] appointments = new Appointment[10];
+    private ArrayList<Appointment> appointments = new ArrayList<>();
 
     public Employee() {
     }
 
-    public Employee(String fn, String ln, String email, String phone, String role, Appointment[] aps, String id) {
+    public Employee(String fn, String ln, String email, String phone, String role, ArrayList<Appointment> aps, String id) {
         this.fname = fn;
         this.lname = ln;
         this.email = email;
@@ -35,7 +38,6 @@ public class Employee {
         this.role = role;
         this.appointments = aps;
         this.id = id;
-
     }
 
     // <editor-fold defaultstate="collapsed" desc="Setters and Getters">    
@@ -87,11 +89,11 @@ public class Employee {
         this.phone = s;
     }
 
-    public Appointment[] getAppointments() {
+    public ArrayList<Appointment> getAppointments() {
         return appointments;
     }
 
-    public void setAppointments(Appointment[] aps) {
+    public void setAppointments(ArrayList<Appointment> aps) {
         this.appointments = aps;
     }
 // </editor-fold> 
@@ -100,17 +102,31 @@ public class Employee {
     }
 
     ;
-    public void viewSchedule() {
+    public ArrayList<String> viewSchedule() {
+
+        ArrayList<String> lisTimeSlot = new ArrayList<>();
+        for (int i = 0; i < appointments.size(); i++) {
+            String sql = String.format("Select TimeSlots from room where AppoinmentID =%s;", appointments.get(i).getAppointmentID());
+            try {
+                Statement s = DBConnector.getConnection().createStatement();
+                ResultSet rs = s.executeQuery(sql);
+                while (rs.next()) {
+                    String InterviewTime = rs.getString(1);
+                    lisTimeSlot.add(InterviewTime);
+                }
+            } catch (SQLException sqle) {
+                sqle.printStackTrace();
+            }
+
+        }
+
+        return lisTimeSlot;
     }
 
     ;
     public void addAppointment(Appointment ap) {
-        for (int i = 0; i < 10; i++) {
-            if (appointments[i]==null) {
-                appointments[0] = ap;
-                break;
-            }
-        }
+
+        appointments.add(ap);
     }
 ;
 
