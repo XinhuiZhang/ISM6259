@@ -5,11 +5,15 @@
  */
 package smaple;
 
+import com.mysql.cj.util.StringUtils;
 import java.awt.List;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 
@@ -29,7 +33,8 @@ public class UploadAvailability extends javax.swing.JFrame {
     public void SetRoom(room r) {
         this.r = r;
     }
-DefaultListModel<String> listModelOfAvailability = new DefaultListModel<>();
+    DefaultListModel<String> listModelOfAvailability = new DefaultListModel<>();
+
     /**
      * Creates new form UploadAvailability
      */
@@ -54,10 +59,12 @@ DefaultListModel<String> listModelOfAvailability = new DefaultListModel<>();
         BtnBack = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         CoBoStartTime = new javax.swing.JComboBox<>();
-        TextEndTime = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         ListOfAvailability = new javax.swing.JList<>();
+        jLabel4 = new javax.swing.JLabel();
+        CoBoEndTime = new javax.swing.JComboBox<>();
+        BtnDelete = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -69,7 +76,9 @@ DefaultListModel<String> listModelOfAvailability = new DefaultListModel<>();
             }
         });
 
-        jLabel1.setText("Time slot:");
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Availability"));
+
+        jLabel1.setText("Date:");
 
         BtnConfirm.setText("Confirm");
         BtnConfirm.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -106,66 +115,83 @@ DefaultListModel<String> listModelOfAvailability = new DefaultListModel<>();
             }
         });
 
-        jLabel3.setText("TO");
+        jLabel3.setText("to");
 
         jScrollPane1.setViewportView(ListOfAvailability);
+
+        jLabel4.setText("Current Availability");
+
+        CoBoEndTime.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "09:30AM", "10:00AM", "10:30AM", "11:00AM", "11:30AM", "12:00PM", "12:30PM", "01:00PM", "01:30PM", "02:00PM", "02:30PM", "03:00PM", "03:30PM", "04:00PM", "04:30PM", "05:00PM" }));
+
+        BtnDelete.setText("Delete");
+        BtnDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BtnDeleteActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(30, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 489, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(33, 33, 33)
-                                .addComponent(BtnConfirm)
-                                .addGap(60, 60, 60)
-                                .addComponent(BtnCancel))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel1)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(TextDate, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(CoBoStartTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(jScrollPane1))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jLabel3)))
+                        .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(TextDate, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(24, 24, 24)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel4)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(BtnBack)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(TextEndTime, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))))
+                                .addGap(6, 6, 6)
+                                .addComponent(CoBoStartTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jLabel3)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(CoBoEndTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(28, 28, 28)
+                                .addComponent(BtnCancel)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 42, Short.MAX_VALUE)
+                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 489, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING))
+                        .addContainerGap())))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(137, 137, 137)
+                .addComponent(BtnConfirm)
+                .addGap(40, 40, 40)
+                .addComponent(BtnDelete)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(BtnBack)
+                .addGap(120, 120, 120))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(52, 52, 52)
                 .addComponent(jLabel2)
-                .addGap(75, 75, 75)
+                .addGap(36, 36, 36)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(TextDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1)
+                    .addComponent(TextDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(CoBoStartTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(TextEndTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3))
-                .addGap(48, 48, 48)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 89, Short.MAX_VALUE)
+                    .addComponent(jLabel3)
+                    .addComponent(BtnCancel)
+                    .addComponent(CoBoEndTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(27, 27, 27)
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 216, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 38, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(BtnConfirm)
-                    .addComponent(BtnCancel)
-                    .addComponent(BtnBack))
+                    .addComponent(BtnBack)
+                    .addComponent(BtnDelete))
                 .addContainerGap())
         );
 
@@ -174,16 +200,16 @@ DefaultListModel<String> listModelOfAvailability = new DefaultListModel<>();
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(28, 28, 28)
+                .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(124, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(26, 26, 26)
+                .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(100, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -196,24 +222,24 @@ DefaultListModel<String> listModelOfAvailability = new DefaultListModel<>();
     private void BtnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnCancelActionPerformed
         // TODO add your handling code here:
         TextDate.setText("");
-        TextEndTime.setText("AutoFilled");
+        //TextEndTime.setText("AutoFilled");
     }//GEN-LAST:event_BtnCancelActionPerformed
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         // TODO add your handling code here:
-        TextEndTime.setEditable(false);
-        TextEndTime.setText("AutoFilled");
-   
-        String sqlx = String.format("Select timeSlots from room where Interviewers like '%%%s%%';",e.getId());
-            try {
-                Statement s = DBConnector.getConnection().createStatement();
-                ResultSet rs = s.executeQuery(sqlx);
-                while (rs.next()) {
-                   listModelOfAvailability.addElement(rs.getString(1));
-                }
-            } catch (SQLException sqle) {
-                sqle.printStackTrace();
+        //TextEndTime.setEditable(false);
+        //TextEndTime.setText("AutoFilled");
+
+        String sqlx = String.format("Select timeSlots from room where Interviewers like '%%%s%%';", e.getId());
+        try {
+            Statement s = DBConnector.getConnection().createStatement();
+            ResultSet rs = s.executeQuery(sqlx);
+            while (rs.next()) {
+                listModelOfAvailability.addElement(rs.getString(1));
             }
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
+        }
 
         ListOfAvailability.setModel(listModelOfAvailability);
     }//GEN-LAST:event_formWindowOpened
@@ -232,8 +258,16 @@ DefaultListModel<String> listModelOfAvailability = new DefaultListModel<>();
                 && (Integer.parseInt(date.substring(0, 4)) >= 2018)
                 && (Integer.parseInt(date.substring(5, 7)) <= 12)
                 && (Integer.parseInt(date.substring(8)) <= 31)) {
-            if (CoBoStartTime.getSelectedIndex() >= 0 && !(TextDate.getText().equals(""))) { //change textDTE
-                String startTime = (String) CoBoStartTime.getSelectedItem();
+            if (CoBoStartTime.getSelectedIndex() >= 0 && !(TextDate.getText().equals(""))) { //changed endtime to combo box
+                String startTime = (String) CoBoStartTime.getSelectedItem(); //A
+                int box1 = CoBoStartTime.getSelectedIndex();
+                String endTime = (String) CoBoEndTime.getSelectedItem();//B
+                int box2 = CoBoEndTime.getSelectedIndex();
+                if (box2 < box1) {
+                    //popup error
+                    JOptionPane.showConfirmDialog(this, "Please enter an end time that occurs after the start time.", "Improper End Time", JOptionPane.WARNING_MESSAGE);
+                } else {
+                    /*
                 int hour = Integer.parseInt(startTime.substring(0, 2));
                 String minute = startTime.substring(3, 5);
                 if (minute.equals("30")) {
@@ -255,36 +289,48 @@ DefaultListModel<String> listModelOfAvailability = new DefaultListModel<>();
                     endTime = String.format("%d:%s PM", hour, minute);
                 }
                 TextEndTime.setText(endTime);
-                String timeSlot = String.format("%s %s-%s", TextDate.getText(), startTime, endTime); //change textDate to new tbx
-                int timeConfirm = JOptionPane.showConfirmDialog(this, String.format("The time slot is %s ?", timeSlot), "Confirm Time Slot", JOptionPane.YES_NO_OPTION);
-                if (timeConfirm == JOptionPane.YES_OPTION) {
-                    //Search the room table and check if the time slot exist
+                     */
+                    String timeSlot = String.format("%s %s-%s", TextDate.getText(), startTime, endTime); //change textDate to new tbx
+                    int timeConfirm = JOptionPane.showConfirmDialog(this, String.format("The time slot is %s ?", timeSlot), "Confirm Time Slot", JOptionPane.YES_NO_OPTION);
+                    if (timeConfirm == JOptionPane.YES_OPTION) {
+                        //Search the room table and check if the time slot exist
 
-                    ArrayList<String> TimeSlots = new ArrayList<>();
-                    ArrayList<String> Interviewers = new ArrayList<>();
-                    String sqlx = String.format("select timeSlots,Interviewers from room;");
-                    try {
-                        Statement sx = DBConnector.getConnection().createStatement();
-                        ResultSet rs = sx.executeQuery(sqlx);
-                        while (rs.next()) {
-                            TimeSlots.add(rs.getString(1));
-                            Interviewers.add(rs.getString(2));
-                        }
-                    } catch (SQLException sqle) {
-                        sqle.printStackTrace();
-                    }
-                    if (TimeSlots.contains(timeSlot)) {
-                        String[] InterviewersList = Interviewers.get(TimeSlots.indexOf(timeSlot)).split(",");
-                        boolean dup = false;
-                        for (int i = 0; i < InterviewersList.length; i++) {
-                            if (InterviewersList[i].equals(e.getId())) {
-                                dup = true;
+                        ArrayList<String> TimeSlots = new ArrayList<>();
+                        ArrayList<String> Interviewers = new ArrayList<>();
+                        String sqlx = String.format("select timeSlots,Interviewers from room;");
+                        try {
+                            Statement sx = DBConnector.getConnection().createStatement();
+                            ResultSet rs = sx.executeQuery(sqlx);
+                            while (rs.next()) {
+                                TimeSlots.add(rs.getString(1));
+                                Interviewers.add(rs.getString(2));
                             }
+                        } catch (SQLException sqle) {
+                            sqle.printStackTrace();
                         }
-                        if (dup) {
-                             JOptionPane.showMessageDialog(this, "You already selected this time.", "Warning", JOptionPane.WARNING_MESSAGE);
+                        if (TimeSlots.contains(timeSlot)) {
+                            String[] InterviewersList = Interviewers.get(TimeSlots.indexOf(timeSlot)).split(",");
+                            boolean dup = false;
+                            for (int i = 0; i < InterviewersList.length; i++) {
+                                if (InterviewersList[i].equals(e.getId())) {
+                                    dup = true;
+                                }
+                            }
+                            if (dup) {
+                                JOptionPane.showMessageDialog(this, "You already selected this time.", "Warning", JOptionPane.WARNING_MESSAGE);
+                            } else {
+                                String sql = String.format("update room  set room.Interviewers='%s' where TimeSlots= '%s' ;", String.format("%s,%s", Interviewers.get(TimeSlots.indexOf(timeSlot)), e.getId()), timeSlot);
+                                try {
+                                    Statement s = DBConnector.getConnection().createStatement();
+                                    s.executeUpdate(sql);
+                                } catch (SQLException sqle) {
+                                    sqle.printStackTrace();
+                                }
+                            }
+
                         } else {
-                            String sql = String.format("update room  set room.Interviewers='%s' where TimeSlots= '%s' ;", String.format("%s,%s", Interviewers.get(TimeSlots.indexOf(timeSlot)), e.getId()), timeSlot);
+
+                            String sql = String.format("insert into room values\n" + "(\"%s\",null,\"%s\");", timeSlot, e.getId());
                             try {
                                 Statement s = DBConnector.getConnection().createStatement();
                                 s.executeUpdate(sql);
@@ -292,19 +338,9 @@ DefaultListModel<String> listModelOfAvailability = new DefaultListModel<>();
                                 sqle.printStackTrace();
                             }
                         }
-
-                    } else {
-
-                        String sql = String.format("insert into room values\n" + "(\"%s\",null,\"%s\");", timeSlot, e.getId());
-                        try {
-                            Statement s = DBConnector.getConnection().createStatement();
-                            s.executeUpdate(sql);
-                        } catch (SQLException sqle) {
-                            sqle.printStackTrace();
-                        }
+                        JOptionPane.showConfirmDialog(this, "Upload successfully", "Transaction", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE);
+                        listModelOfAvailability.addElement(timeSlot);
                     }
-                    JOptionPane.showConfirmDialog(this, "Upload successfully", "Transaction", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE);
-                    listModelOfAvailability.addElement(timeSlot);
                 }
             } else {
                 JOptionPane.showMessageDialog(this, "Please Fill the date and select start time", "Warning", JOptionPane.WARNING_MESSAGE);
@@ -325,9 +361,101 @@ DefaultListModel<String> listModelOfAvailability = new DefaultListModel<>();
         // TODO add your handling code here:
         MainPage mp = new MainPage();
         mp.SetEmployee(e);
+        mp.SetRoom(r);
         mp.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_BtnBackActionPerformed
+
+    private void BtnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnDeleteActionPerformed
+        // TODO add your handling code here:
+        String timeSlot = ListOfAvailability.getSelectedValue();
+        int index = ListOfAvailability.getSelectedIndex();
+        String test = null;
+        int resp = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete this time?", "Delete availability", JOptionPane.YES_NO_OPTION);
+        if (resp == JOptionPane.YES_OPTION) {
+            String sql = String.format("select AppoinmentID from room where room.TimeSlots ='%s';", timeSlot);
+            Connection cnn = DBConnector.getConnection();
+            try {
+                Statement s = DBConnector.getConnection().createStatement();
+                ResultSet rs = s.executeQuery(sql);
+                while (rs.next()) {
+                    if (StringUtils.isNullOrEmpty(rs.getString(1))) {
+                        listModelOfAvailability.remove(index);
+                        String sqlx = String.format("delete from room where room.TimeSlots='%s';", timeSlot);
+                        Connection cnn1 = DBConnector.getConnection();
+                        try {
+                            Statement ss = cnn.createStatement();
+                            cnn1.setAutoCommit(false);
+                            ss.executeUpdate(sqlx);
+                            cnn.commit();
+                            
+                        } catch (SQLException sqle) {
+                            try {
+                                cnn.rollback();
+                            } catch (SQLException ex) {
+                                Logger.getLogger(ChooseInterviewTime.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                            sqle.printStackTrace();
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(this, "An appointment exists on this timeslot. Please cancel that appointment first.", "Delete Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            } catch (SQLException sqle) {
+                sqle.printStackTrace();
+            }
+        }
+
+        /*
+        String ApID="";
+        int resp = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete this time?", "Delete availability", JOptionPane.YES_NO_OPTION);
+        if (resp == JOptionPane.YES_OPTION) {
+            String sql = String.format("select AppoinmentID from room where room.TimeSlots='s';", timeSlot);
+            Connection cnn = DBConnector.getConnection();
+            try {                
+                cnn.setAutoCommit(false);
+                Statement s = DBConnector.getConnection().createStatement();
+                ResultSet rs = s.executeQuery(sql);
+                while (rs.next()) {
+                        ApID = rs.getString(1);                    
+                }
+
+                cnn.commit();
+                String[] sqlx = new String[4];
+                sqlx[0] = String.format("delete from room where room.TimeSlots='%s';", timeSlot);
+                sqlx[1] = String.format("delete from interviewerteam where interviewerteam.Appointment_AppointmentID ='%s';", ApID);
+                sqlx[2] = String.format("update interviewee set AppoinmentID=null where AppoinmentID='%s';", ApID);
+                sqlx[3] = String.format("delete from appointment where AppointmentID='%s';", ApID);
+                Connection cnn1 = DBConnector.getConnection();
+                try {
+                    Statement ss = cnn1.createStatement();
+                    cnn.setAutoCommit(false);
+                    JOptionPane.showConfirmDialog(this,String.format("ApID = %s",ApID),"APID",JOptionPane.INFORMATION_MESSAGE);
+                    for (int i = 0; i < sqlx.length; i++) {
+                        ss.executeUpdate(sqlx[i]);
+                    }
+                    cnn1.commit();
+                    e.deleteAppointment(ApID);
+                    listModelOfAvailability.remove(index);
+                } catch (SQLException sqle) {
+                    try {
+                        cnn.rollback();
+                    } catch (SQLException ex) {
+                        Logger.getLogger(ChooseInterviewTime.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    sqle.printStackTrace();
+                }
+            } catch (SQLException sqle) {
+                try {
+                    cnn.rollback();
+                } catch (SQLException ex) {
+                    Logger.getLogger(ChooseInterviewTime.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                sqle.printStackTrace();
+            }
+        }
+         */
+    }//GEN-LAST:event_BtnDeleteActionPerformed
 
     /**
      * @param args the command line arguments
@@ -368,13 +496,15 @@ DefaultListModel<String> listModelOfAvailability = new DefaultListModel<>();
     private javax.swing.JButton BtnBack;
     private javax.swing.JButton BtnCancel;
     private javax.swing.JButton BtnConfirm;
+    private javax.swing.JButton BtnDelete;
+    private javax.swing.JComboBox<String> CoBoEndTime;
     private javax.swing.JComboBox<String> CoBoStartTime;
     private javax.swing.JList<String> ListOfAvailability;
     private javax.swing.JTextField TextDate;
-    private javax.swing.JTextField TextEndTime;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
