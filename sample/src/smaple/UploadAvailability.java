@@ -5,9 +5,12 @@
  */
 package smaple;
 
+import java.awt.List;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 
 /**
@@ -21,12 +24,12 @@ public class UploadAvailability extends javax.swing.JFrame {
     public void SetEmployee(Employee e) {
         this.e = e;
     }
-        private room r;
+    private room r;
 
     public void SetRoom(room r) {
         this.r = r;
     }
-
+DefaultListModel<String> listModelOfAvailability = new DefaultListModel<>();
     /**
      * Creates new form UploadAvailability
      */
@@ -53,6 +56,8 @@ public class UploadAvailability extends javax.swing.JFrame {
         CoBoStartTime = new javax.swing.JComboBox<>();
         TextEndTime = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        ListOfAvailability = new javax.swing.JList<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -78,7 +83,7 @@ public class UploadAvailability extends javax.swing.JFrame {
             }
         });
 
-        BtnCancel.setText("Cancel ");
+        BtnCancel.setText("Clear");
         BtnCancel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BtnCancelActionPerformed(evt);
@@ -103,6 +108,8 @@ public class UploadAvailability extends javax.swing.JFrame {
 
         jLabel3.setText("TO");
 
+        jScrollPane1.setViewportView(ListOfAvailability);
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -116,23 +123,29 @@ public class UploadAvailability extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(33, 33, 33)
+                                .addComponent(BtnConfirm)
+                                .addGap(60, 60, 60)
+                                .addComponent(BtnCancel))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(jLabel1)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(TextDate, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(CoBoStartTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addComponent(TextDate, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(CoBoStartTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(jScrollPane1))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jLabel3))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(43, 43, 43)
-                                .addComponent(BtnConfirm)
-                                .addGap(51, 51, 51)
-                                .addComponent(BtnCancel)))
+                                .addComponent(jLabel3)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(BtnBack)
-                            .addComponent(TextEndTime, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(BtnBack)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(TextEndTime, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -146,12 +159,14 @@ public class UploadAvailability extends javax.swing.JFrame {
                     .addComponent(CoBoStartTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(TextEndTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 118, Short.MAX_VALUE)
+                .addGap(48, 48, 48)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 89, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(BtnConfirm)
                     .addComponent(BtnCancel)
                     .addComponent(BtnBack))
-                .addGap(97, 97, 97))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -161,14 +176,14 @@ public class UploadAvailability extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(28, 28, 28)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(24, Short.MAX_VALUE))
+                .addContainerGap(124, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(26, 26, 26)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(51, Short.MAX_VALUE))
+                .addContainerGap(100, Short.MAX_VALUE))
         );
 
         pack();
@@ -188,6 +203,19 @@ public class UploadAvailability extends javax.swing.JFrame {
         // TODO add your handling code here:
         TextEndTime.setEditable(false);
         TextEndTime.setText("AutoFilled");
+   
+        String sqlx = String.format("Select timeSlots from room where Interviewers like '%%%s%%';",e.getId());
+            try {
+                Statement s = DBConnector.getConnection().createStatement();
+                ResultSet rs = s.executeQuery(sqlx);
+                while (rs.next()) {
+                   listModelOfAvailability.addElement(rs.getString(1));
+                }
+            } catch (SQLException sqle) {
+                sqle.printStackTrace();
+            }
+
+        ListOfAvailability.setModel(listModelOfAvailability);
     }//GEN-LAST:event_formWindowOpened
 
     private void formWindowActivated(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowActivated
@@ -198,54 +226,90 @@ public class UploadAvailability extends javax.swing.JFrame {
     private void BtnConfirmMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_BtnConfirmMouseClicked
         // Read the startTime from comboBox and calculate endTime
         String date = TextDate.getText(); //change textDate
-        if(
-                (date.length()==10)&&
-                (date.substring(4,5).equals("/"))&&
-                (date.substring(7,8).equals("/"))&&
-                (Integer.parseInt(date.substring(0,4))>=2018)&&
-                (Integer.parseInt(date.substring(5,7))<=12)&&
-                (Integer.parseInt(date.substring(8))<=31)
-                ){
-        if (CoBoStartTime.getSelectedIndex() >= 0 && !(TextDate.getText().equals(""))) { //change textDTE
-            String startTime = (String) CoBoStartTime.getSelectedItem();
-            int hour = Integer.parseInt(startTime.substring(0, 2));
-            String minute = startTime.substring(3, 5);
-            if (minute.equals("30")) {
-                minute = "00";
-                hour += 1;
-                if (hour > 12) {
-                    hour -= 12;
+        if ((date.length() == 10)
+                && (date.substring(4, 5).equals("/"))
+                && (date.substring(7, 8).equals("/"))
+                && (Integer.parseInt(date.substring(0, 4)) >= 2018)
+                && (Integer.parseInt(date.substring(5, 7)) <= 12)
+                && (Integer.parseInt(date.substring(8)) <= 31)) {
+            if (CoBoStartTime.getSelectedIndex() >= 0 && !(TextDate.getText().equals(""))) { //change textDTE
+                String startTime = (String) CoBoStartTime.getSelectedItem();
+                int hour = Integer.parseInt(startTime.substring(0, 2));
+                String minute = startTime.substring(3, 5);
+                if (minute.equals("30")) {
+                    minute = "00";
+                    hour += 1;
+                    if (hour > 12) {
+                        hour -= 12;
+                    }
+                } else {
+                    minute = "30";
                 }
-            } else {
-                minute = "30";
-            }
-            String endTime;
-            if (hour >= 9) {
-                endTime = String.format("%d:%s AM", hour, minute);
-                if (hour == 12) {
+                String endTime;
+                if (hour >= 9) {
+                    endTime = String.format("%d:%s AM", hour, minute);
+                    if (hour == 12) {
+                        endTime = String.format("%d:%s PM", hour, minute);
+                    }
+                } else {
                     endTime = String.format("%d:%s PM", hour, minute);
                 }
+                TextEndTime.setText(endTime);
+                String timeSlot = String.format("%s %s-%s", TextDate.getText(), startTime, endTime); //change textDate to new tbx
+                int timeConfirm = JOptionPane.showConfirmDialog(this, String.format("The time slot is %s ?", timeSlot), "Confirm Time Slot", JOptionPane.YES_NO_OPTION);
+                if (timeConfirm == JOptionPane.YES_OPTION) {
+                    //Search the room table and check if the time slot exist
+
+                    ArrayList<String> TimeSlots = new ArrayList<>();
+                    ArrayList<String> Interviewers = new ArrayList<>();
+                    String sqlx = String.format("select timeSlots,Interviewers from room;");
+                    try {
+                        Statement sx = DBConnector.getConnection().createStatement();
+                        ResultSet rs = sx.executeQuery(sqlx);
+                        while (rs.next()) {
+                            TimeSlots.add(rs.getString(1));
+                            Interviewers.add(rs.getString(2));
+                        }
+                    } catch (SQLException sqle) {
+                        sqle.printStackTrace();
+                    }
+                    if (TimeSlots.contains(timeSlot)) {
+                        String[] InterviewersList = Interviewers.get(TimeSlots.indexOf(timeSlot)).split(",");
+                        boolean dup = false;
+                        for (int i = 0; i < InterviewersList.length; i++) {
+                            if (InterviewersList[i].equals(e.getId())) {
+                                dup = true;
+                            }
+                        }
+                        if (dup) {
+                             JOptionPane.showMessageDialog(this, "You already selected this time.", "Warning", JOptionPane.WARNING_MESSAGE);
+                        } else {
+                            String sql = String.format("update room  set room.Interviewers='%s' where TimeSlots= '%s' ;", String.format("%s,%s", Interviewers.get(TimeSlots.indexOf(timeSlot)), e.getId()), timeSlot);
+                            try {
+                                Statement s = DBConnector.getConnection().createStatement();
+                                s.executeUpdate(sql);
+                            } catch (SQLException sqle) {
+                                sqle.printStackTrace();
+                            }
+                        }
+
+                    } else {
+
+                        String sql = String.format("insert into room values\n" + "(\"%s\",null,\"%s\");", timeSlot, e.getId());
+                        try {
+                            Statement s = DBConnector.getConnection().createStatement();
+                            s.executeUpdate(sql);
+                        } catch (SQLException sqle) {
+                            sqle.printStackTrace();
+                        }
+                    }
+                    JOptionPane.showConfirmDialog(this, "Upload successfully", "Transaction", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE);
+                    listModelOfAvailability.addElement(timeSlot);
+                }
             } else {
-                endTime = String.format("%d:%s PM", hour, minute);
+                JOptionPane.showMessageDialog(this, "Please Fill the date and select start time", "Warning", JOptionPane.WARNING_MESSAGE);
             }
-            TextEndTime.setText(endTime);
-            String timeSlot = String.format("%s %s-%s", TextDate.getText(), startTime, endTime); //change textDate to new tbx
-            int timeConfirm = JOptionPane.showConfirmDialog(this, String.format("The time slot is %s ?", timeSlot), "Confirm Time Slot", JOptionPane.YES_NO_OPTION);
-            if(timeConfirm==JOptionPane.YES_OPTION){
-            String sql = String.format("insert into room values\n" + "(\"%s\",null,\"%s\");", timeSlot, e.getId());
-            try {
-                Statement s = DBConnector.getConnection().createStatement();
-                s.executeUpdate(sql);
-            } catch (SQLException sqle) {
-                sqle.printStackTrace();
-            }
-            JOptionPane.showConfirmDialog(this, "Upload successfully", "Transaction",JOptionPane.DEFAULT_OPTION,JOptionPane.PLAIN_MESSAGE);
-        }
         } else {
-            JOptionPane.showMessageDialog(this, "Please Fill the date and select start time", "Warning", JOptionPane.WARNING_MESSAGE);
-        }
-        }
-        else {
             JOptionPane.showMessageDialog(this, "Please enter a valid date.", "Warning", JOptionPane.WARNING_MESSAGE);
             TextDate.setText("");
             TextDate.requestFocus();
@@ -305,11 +369,13 @@ public class UploadAvailability extends javax.swing.JFrame {
     private javax.swing.JButton BtnCancel;
     private javax.swing.JButton BtnConfirm;
     private javax.swing.JComboBox<String> CoBoStartTime;
+    private javax.swing.JList<String> ListOfAvailability;
     private javax.swing.JTextField TextDate;
     private javax.swing.JTextField TextEndTime;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 }

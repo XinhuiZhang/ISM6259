@@ -5,6 +5,7 @@
  */
 package smaple;
 
+import com.mysql.cj.util.StringUtils;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -163,7 +164,10 @@ public class ChooseInterviewTime extends javax.swing.JFrame {
                 Statement s = DBConnector.getConnection().createStatement();
                 ResultSet rs = s.executeQuery(sqlz);
                 while (rs.next()) {
+                    if(StringUtils.isNullOrEmpty(rs.getString(1))){
+                    AppoinmentID = "0";}else{
                     AppoinmentID = Integer.toString(Integer.parseInt(rs.getString(1)) + 1);
+                    }
                 }
             } catch (SQLException sqle) {
                 sqle.printStackTrace();
@@ -179,18 +183,24 @@ public class ChooseInterviewTime extends javax.swing.JFrame {
             } catch (SQLException sqle) {
                 sqle.printStackTrace();
             }
-
-            String[] sql = new String[4];
+            String[] ErIDList = ErID.split(",");
+            String[] sqlThree = new String[ErIDList.length];
+            for (int i = 0; i < ErIDList.length; i++) {
+                sqlThree[i]= String.format("insert into interviewerTeam values ('%s','%s'); ", ErIDList[i], AppoinmentID);
+            }
+            String[] sql = new String[3];
             sql[0] = String.format("update room set room.AppoinmentID='%s' where TimeSlots='%s';", AppoinmentID, selectedTimeSlot);
             sql[1] = String.format("insert into Appointment values('%s')", AppoinmentID);
             sql[2] = String.format("update interviewee set AppoinmentID='%s' where EEID='%s';", AppoinmentID, e.getId());
-            sql[3] = String.format("insert into interviewerTeam values('%s','%s')", ErID, AppoinmentID);
             Connection cnn = DBConnector.getConnection();
             try {
                 Statement s = cnn.createStatement();
                 cnn.setAutoCommit(false);
                 for (int i = 0; i < sql.length; i++) {
                     s.executeUpdate(sql[i]);
+                }
+                for (int i = 0; i < sqlThree.length; i++) {
+                    s.executeUpdate(sqlThree[i]);
                 }
                 cnn.commit();
             } catch (SQLException sqle) {

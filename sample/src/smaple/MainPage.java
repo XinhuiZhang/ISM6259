@@ -54,7 +54,6 @@ public class MainPage extends javax.swing.JFrame {
         BtnLogOut = new javax.swing.JButton();
         BtnUploadAvailability = new javax.swing.JButton();
         BtnPickInterviewTime = new javax.swing.JButton();
-        BtnCreateInterviews = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -165,13 +164,6 @@ public class MainPage extends javax.swing.JFrame {
             }
         });
 
-        BtnCreateInterviews.setText("Create Interviews");
-        BtnCreateInterviews.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                BtnCreateInterviewsActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -186,7 +178,6 @@ public class MainPage extends javax.swing.JFrame {
                     .addComponent(BtnViewMyInterviews, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(BtnLogOut, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(BtnUploadAvailability, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(BtnCreateInterviews, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(BtnPickInterviewTime, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(55, 55, 55))
         );
@@ -198,9 +189,7 @@ public class MainPage extends javax.swing.JFrame {
                         .addContainerGap()
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(8, 8, 8)
-                        .addComponent(BtnCreateInterviews)
-                        .addGap(18, 18, 18)
+                        .addGap(51, 51, 51)
                         .addComponent(BtnUploadAvailability)
                         .addGap(26, 26, 26)
                         .addComponent(BtnViewMyInterviews)
@@ -255,10 +244,6 @@ public class MainPage extends javax.swing.JFrame {
         this.setVisible(false);
     }//GEN-LAST:event_BtnViewMyInterviewsActionPerformed
 
-    private void BtnCreateInterviewsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnCreateInterviewsActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_BtnCreateInterviewsActionPerformed
-
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         // TODO add your handling code here:
         TextName.setText(e.getLname() + " " + e.getFname());
@@ -270,7 +255,6 @@ public class MainPage extends javax.swing.JFrame {
             TextMessage.setText(appMsg);
             TextMessage.setEditable(false);
         } else {
-            BtnCreateInterviews.setVisible(false);
             BtnUploadAvailability.setVisible(false);
             if (e.getAppointments().size() == 0) {
                 TextMessage.setEditable(false);
@@ -324,7 +308,6 @@ public class MainPage extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton BtnCreateInterviews;
     private javax.swing.JButton BtnLogOut;
     private javax.swing.JButton BtnPickInterviewTime;
     private javax.swing.JButton BtnUploadAvailability;
