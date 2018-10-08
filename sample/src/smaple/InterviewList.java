@@ -20,14 +20,14 @@ import javax.swing.JOptionPane;
  * @author zxh25
  */
 public class InterviewList extends javax.swing.JFrame {
-
+    
     private Employee e;
-
+    
     public void SetEmployee(Employee e) {
         this.e = e;
     }
     private room r;
-
+    
     public void SetRoom(room r) {
         this.r = r;
     }
@@ -57,6 +57,7 @@ public class InterviewList extends javax.swing.JFrame {
         ListInterviews = new javax.swing.JList<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Scheduling Application");
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowOpened(java.awt.event.WindowEvent evt) {
                 formWindowOpened(evt);
@@ -162,7 +163,7 @@ public class InterviewList extends javax.swing.JFrame {
         } else {
             BtnInterviewDocumentation.setVisible(false);
         }
-
+        
 
     }//GEN-LAST:event_formWindowOpened
 
@@ -172,47 +173,48 @@ public class InterviewList extends javax.swing.JFrame {
         if (resp == JOptionPane.YES_OPTION) {
             String selectedTimeSlot = ListInterviews.getSelectedValue();
             int selectedIndex = ListInterviews.getSelectedIndex();
-            String EeID = "";
-            String ApID = "";
-
-            String sqlx = String.format("select interviewee.EEID,appointment.AppointmentID\n"
-                    + "from interviewee,appointment,room \n"
-                    + "where interviewee.AppoinmentID=appointment.AppointmentID\n"
-                    + "and appointment.AppointmentID=room.AppoinmentID\n"
-                    + "and  room.TimeSlots= '%s' ;", selectedTimeSlot);
-            try {
-                Statement s = DBConnector.getConnection().createStatement();
-                ResultSet rs = s.executeQuery(sqlx);
-                while (rs.next()) {
-                    EeID = rs.getString(1);
-                    ApID = rs.getString(2);
-
-                }
-            } catch (SQLException sqle) {
-                sqle.printStackTrace();
-            }
-
-            String[] sql = new String[4];
-            sql[0] = String.format("update interviewee set AppoinmentID=null where EEID='%s';", EeID);
-            sql[1] = String.format("update room  set AppoinmentID=null where TimeSlots= '%s' ;", selectedTimeSlot);
-            sql[2] = String.format("delete from interviewerteam where Appointment_AppointmentID='%s';", ApID);
-            sql[3] = String.format("delete from appointment where AppointmentID='%s';", ApID);
-            Connection cnn = DBConnector.getConnection();
-            try {
-                Statement s = cnn.createStatement();
-                cnn.setAutoCommit(false);
-                for (int i = 0; i < sql.length; i++) {
-                    s.executeUpdate(sql[i]);
-                }
-                cnn.commit();
-            } catch (SQLException sqle) {
-                try {
-                    cnn.rollback();
-                } catch (SQLException ex) {
-                    Logger.getLogger(InterviewList.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                sqle.printStackTrace();
-            }
+//            String EeID = "";
+//            String ApID = "";
+//
+//            String sqlx = String.format("select interviewee.EEID,appointment.AppointmentID\n"
+//                    + "from interviewee,appointment,room \n"
+//                    + "where interviewee.AppoinmentID=appointment.AppointmentID\n"
+//                    + "and appointment.AppointmentID=room.AppoinmentID\n"
+//                    + "and  room.TimeSlots= '%s' ;", selectedTimeSlot);
+//            try {
+//                Statement s = DBConnector.getConnection().createStatement();
+//                ResultSet rs = s.executeQuery(sqlx);
+//                while (rs.next()) {
+//                    EeID = rs.getString(1);
+//                    ApID = rs.getString(2);
+//
+//                }
+//            } catch (SQLException sqle) {
+//                sqle.printStackTrace();
+//            }
+//
+//            String[] sql = new String[4];
+//            sql[0] = String.format("update interviewee set AppoinmentID=null where EEID='%s';", EeID);
+//            sql[1] = String.format("update room  set AppoinmentID=null where TimeSlots= '%s' ;", selectedTimeSlot);
+//            sql[2] = String.format("delete from interviewerteam where Appointment_AppointmentID='%s';", ApID);
+//            sql[3] = String.format("delete from appointment where AppointmentID='%s';", ApID);
+//            Connection cnn = DBConnector.getConnection();
+//            try {
+//                Statement s = cnn.createStatement();
+//                cnn.setAutoCommit(false);
+//                for (int i = 0; i < sql.length; i++) {
+//                    s.executeUpdate(sql[i]);
+//                }
+//                cnn.commit();
+//            } catch (SQLException sqle) {
+//                try {
+//                    cnn.rollback();
+//                } catch (SQLException ex) {
+//                    Logger.getLogger(InterviewList.class.getName()).log(Level.SEVERE, null, ex);
+//                }
+//                sqle.printStackTrace();
+//            }
+           String ApID=e.cancelInterview(selectedTimeSlot, selectedIndex);
             listModelInterviews.remove(selectedIndex);
             e.deleteAppointment(ApID);
         }

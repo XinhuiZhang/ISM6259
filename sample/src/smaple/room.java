@@ -5,7 +5,14 @@
  */
 package smaple;
 
+import com.mysql.cj.util.StringUtils;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -28,4 +35,74 @@ public class room {
         }
         return LstimeSlot;
     }
+
+    public String generateAppointment() {
+        String AppoinmentID = "";
+        String sqlz = String.format("select max(AppointmentID) from appointment;");
+        try {
+            Statement s = DBConnector.getConnection().createStatement();
+            ResultSet rs = s.executeQuery(sqlz);
+            while (rs.next()) {
+                if (StringUtils.isNullOrEmpty(rs.getString(1))) {
+                    AppoinmentID = "0";
+                } else {
+                    AppoinmentID = Integer.toString(Integer.parseInt(rs.getString(1)) + 1);
+                }
+            }
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
+        }
+        return AppoinmentID;
+    }
+
+    public String getInterviewersBySelectedTimeSlot(String selectedTimeslot) {
+        String ErID = "";
+        String sqlx = String.format("Select Interviewers from room where TimeSlots ='%s';", selectedTimeslot);
+        try {
+            Statement s = DBConnector.getConnection().createStatement();
+            ResultSet rs = s.executeQuery(sqlx);
+            while (rs.next()) {
+                ErID = rs.getString(1);
+            }
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
+        }
+        return ErID;
+    }
+
+    public ArrayList<String> getTimeSlotsByInterviewers(Employee e) {
+
+        ArrayList<String> timeSlots = new ArrayList<>();
+        String sqlx = String.format("Select timeSlots from room where Interviewers like '%%%s%%';", e.getId());
+        try {
+            Statement s = DBConnector.getConnection().createStatement();
+            ResultSet rs = s.executeQuery(sqlx);
+            while (rs.next()) {
+                timeSlots.add(rs.getString(1));
+            }
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
+        }
+        return timeSlots;
+    }
+
+    public void deleteTimeSlots(String timeSlot) {
+        String sqlx = String.format("delete from room where room.TimeSlots='%s';", timeSlot);
+        Connection cnn1 = DBConnector.getConnection();
+        try {
+            Statement ss = cnn1.createStatement();
+            cnn1.setAutoCommit(false);
+            ss.executeUpdate(sqlx);
+            cnn1.commit();
+
+        } catch (SQLException sqle) {
+            try {
+                cnn1.rollback();
+            } catch (SQLException ex) {
+                Logger.getLogger(ChooseInterviewTime.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            sqle.printStackTrace();
+        }
+    }
+
 }

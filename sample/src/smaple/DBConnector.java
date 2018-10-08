@@ -34,33 +34,13 @@ public abstract class DBConnector {
             String url = String.format("jdbc:mysql://localhost/%s?autoReconnect=true&useSSL=false&user=%s&password=%s", dbname, uid, spass);
 //            Class.forName("com.mysql.jdbc.Driver");
             cnn = DriverManager.getConnection(url);
-        } //        catch (ClassNotFoundException cfe) {
-        //            cfe.printStackTrace();
-        //        } 
+        }
         catch (SQLException sqle) {
             sqle.printStackTrace();
         }
 
     }
 
-//    public static int TransactSQL(String[] sql) {
-//        Statement st = null;
-//        int n = 0;
-//        try {
-//            st = cnn.createStatement();
-//            cnn.setAutoCommit(false);//so that DBE waits for the COMMIT    
-//            for (int i = 0; i < sql.length; i++) {
-//                n += st.executeUpdate(sql[i]);
-//            }
-//            cnn.commit();
-//        } catch (SQLException ex) {
-//            try{
-//                cnn.rollback();
-//            
-//        }catch(SQLException ec) { throw ec;}
-//        return n;//number of rows impacted
-//   
-//    }
-//   
+
 
     }

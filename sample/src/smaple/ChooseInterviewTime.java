@@ -51,6 +51,7 @@ public class ChooseInterviewTime extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jSeparator1 = new javax.swing.JSeparator();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         ListTimeSlots = new javax.swing.JList<>();
@@ -59,6 +60,7 @@ public class ChooseInterviewTime extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Scheduling Application");
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowOpened(java.awt.event.WindowEvent evt) {
                 formWindowOpened(evt);
@@ -165,58 +167,69 @@ public class ChooseInterviewTime extends javax.swing.JFrame {
         String ErID = "";
         int resp = JOptionPane.showConfirmDialog(this, String.format("The time slot is %s ?", selectedTimeSlot), "Confirm Time Slot", JOptionPane.YES_NO_OPTION);
         if (resp == JOptionPane.YES_OPTION) {
-            String sqlz = String.format("select max(AppointmentID) from appointment;");
-            try {
-                Statement s = DBConnector.getConnection().createStatement();
-                ResultSet rs = s.executeQuery(sqlz);
-                while (rs.next()) {
-                    if(StringUtils.isNullOrEmpty(rs.getString(1))){
-                    AppoinmentID = "0";}else{
-                    AppoinmentID = Integer.toString(Integer.parseInt(rs.getString(1)) + 1);
-                    }
-                }
-            } catch (SQLException sqle) {
-                sqle.printStackTrace();
-            }
+    // <editor-fold defaultstate="collapsed" desc="Get the AppointmentID">  
+    
+//            String sqlz = String.format("select max(AppointmentID) from appointment;");
+//            try {
+//                Statement s = DBConnector.getConnection().createStatement();
+//                ResultSet rs = s.executeQuery(sqlz);
+//                while (rs.next()) {
+//                    if(StringUtils.isNullOrEmpty(rs.getString(1))){
+//                    AppoinmentID = "0";}else{
+//                    AppoinmentID = Integer.toString(Integer.parseInt(rs.getString(1)) + 1);
+//                    }
+//                }
+//            } catch (SQLException sqle) {
+//                sqle.printStackTrace();
+//            }
+            
+            AppoinmentID=r.generateAppointment();
+// </editor-fold>  
 
-            String sqlx = String.format("Select Interviewers from room where TimeSlots ='%s';", r.timeSlots.get(selectedTimeSlotIndex));
-            try {
-                Statement s = DBConnector.getConnection().createStatement();
-                ResultSet rs = s.executeQuery(sqlx);
-                while (rs.next()) {
-                    ErID = rs.getString(1);
-                }
-            } catch (SQLException sqle) {
-                sqle.printStackTrace();
-            }
-            String[] ErIDList = ErID.split(",");
-            String[] sqlThree = new String[ErIDList.length];
-            for (int i = 0; i < ErIDList.length; i++) {
-                sqlThree[i]= String.format("insert into interviewerTeam values ('%s','%s'); ", ErIDList[i], AppoinmentID);
-            }
-            String[] sql = new String[3];
-            sql[0] = String.format("update room set room.AppoinmentID='%s' where TimeSlots='%s';", AppoinmentID, selectedTimeSlot);
-            sql[1] = String.format("insert into Appointment values('%s')", AppoinmentID);
-            sql[2] = String.format("update interviewee set AppoinmentID='%s' where EEID='%s';", AppoinmentID, e.getId());
-            Connection cnn = DBConnector.getConnection();
-            try {
-                Statement s = cnn.createStatement();
-                cnn.setAutoCommit(false);
-                for (int i = 0; i < sql.length; i++) {
-                    s.executeUpdate(sql[i]);
-                }
-                for (int i = 0; i < sqlThree.length; i++) {
-                    s.executeUpdate(sqlThree[i]);
-                }
-                cnn.commit();
-            } catch (SQLException sqle) {
-                try {
-                    cnn.rollback();
-                } catch (SQLException ex) {
-                    Logger.getLogger(ChooseInterviewTime.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                sqle.printStackTrace();
-            }
+    // <editor-fold defaultstate="collapsed" desc="Get the interviewers available in selected time slot">  
+//            String sqlx = String.format("Select Interviewers from room where TimeSlots ='%s';", r.timeSlots.get(selectedTimeSlotIndex));
+//            try {
+//                Statement s = DBConnector.getConnection().createStatement();
+//                ResultSet rs = s.executeQuery(sqlx);
+//                while (rs.next()) {
+//                    ErID = rs.getString(1);
+//                }
+//            } catch (SQLException sqle) {
+//                sqle.printStackTrace();   
+//            }
+            ErID=r.getInterviewersBySelectedTimeSlot(r.timeSlots.get(selectedTimeSlotIndex));
+            // </editor-fold>  
+           // <editor-fold defaultstate="collapsed" desc="Made the appointment"> 
+//            String[] ErIDList = ErID.split(",");
+//            String[] sqlThree = new String[ErIDList.length];
+//            for (int i = 0; i < ErIDList.length; i++) {
+//                sqlThree[i]= String.format("insert into interviewerTeam values ('%s','%s'); ", ErIDList[i], AppoinmentID);
+//            }
+//            String[] sql = new String[3];
+//            sql[0] = String.format("update room set room.AppoinmentID='%s' where TimeSlots='%s';", AppoinmentID, selectedTimeSlot);
+//            sql[1] = String.format("insert into Appointment values('%s')", AppoinmentID);
+//            sql[2] = String.format("update interviewee set AppoinmentID='%s' where EEID='%s';", AppoinmentID, e.getId());
+//            Connection cnn = DBConnector.getConnection();
+//            try {
+//                Statement s = cnn.createStatement();
+//                cnn.setAutoCommit(false);
+//                for (int i = 0; i < sql.length; i++) {
+//                    s.executeUpdate(sql[i]);
+//                }
+//                for (int i = 0; i < sqlThree.length; i++) {
+//                    s.executeUpdate(sqlThree[i]);
+//                }
+//                cnn.commit();
+//            } catch (SQLException sqle) {
+//                try {
+//                    cnn.rollback();
+//                } catch (SQLException ex) {
+//                    Logger.getLogger(ChooseInterviewTime.class.getName()).log(Level.SEVERE, null, ex);
+//                }
+//                sqle.printStackTrace();
+//            }
+            e.ConfirmSelectedTimeSlots(ErID, AppoinmentID, selectedTimeSlot,e);
+            // </editor-fold>  
             Appointment apt = new Appointment(AppoinmentID, selectedTimeSlot);
             e.addAppointment(apt);
             listModelTimeSlots.remove(selectedTimeSlotIndex);
@@ -270,5 +283,6 @@ public class ChooseInterviewTime extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JSeparator jSeparator1;
     // End of variables declaration//GEN-END:variables
 }

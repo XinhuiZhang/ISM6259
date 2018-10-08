@@ -67,6 +67,7 @@ public class UploadAvailability extends javax.swing.JFrame {
         BtnDelete = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Scheduling Application");
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowActivated(java.awt.event.WindowEvent evt) {
                 formWindowActivated(evt);
@@ -230,17 +231,20 @@ public class UploadAvailability extends javax.swing.JFrame {
         //TextEndTime.setEditable(false);
         //TextEndTime.setText("AutoFilled");
 
-        String sqlx = String.format("Select timeSlots from room where Interviewers like '%%%s%%';", e.getId());
-        try {
-            Statement s = DBConnector.getConnection().createStatement();
-            ResultSet rs = s.executeQuery(sqlx);
-            while (rs.next()) {
-                listModelOfAvailability.addElement(rs.getString(1));
-            }
-        } catch (SQLException sqle) {
-            sqle.printStackTrace();
+//        String sqlx = String.format("Select timeSlots from room where Interviewers like '%%%s%%';", e.getId());
+//        try {
+//            Statement s = DBConnector.getConnection().createStatement();
+//            ResultSet rs = s.executeQuery(sqlx);
+//            while (rs.next()) {
+//                listModelOfAvailability.addElement(rs.getString(1));
+//            }
+//        } catch (SQLException sqle) {
+//            sqle.printStackTrace();
+//        }      
+        ArrayList<String> times = r.getTimeSlotsByInterviewers(e);
+        for (int i = 0; i < times.size(); i++) {
+            listModelOfAvailability.addElement(times.get(i));
         }
-
         ListOfAvailability.setModel(listModelOfAvailability);
     }//GEN-LAST:event_formWindowOpened
 
@@ -289,58 +293,69 @@ public class UploadAvailability extends javax.swing.JFrame {
                     endTime = String.format("%d:%s PM", hour, minute);
                 }
                 TextEndTime.setText(endTime);
+                    
                      */
-                    String timeSlot = String.format("%s %s-%s", TextDate.getText(), startTime, endTime); //change textDate to new tbx
+
+                    String timeSlot = String.format("%s %s-%s", TextDate.getText(), startTime, endTime);
                     int timeConfirm = JOptionPane.showConfirmDialog(this, String.format("The time slot is %s ?", timeSlot), "Confirm Time Slot", JOptionPane.YES_NO_OPTION);
                     if (timeConfirm == JOptionPane.YES_OPTION) {
-                        //Search the room table and check if the time slot exist
+                        for (int z = box1; z <= box2; z++) {
+                            // <editor-fold defaultstate="collapsed" desc="UpdateTime">   
+                            timeSlot = String.format("%s %s-%s", TextDate.getText(), CoBoStartTime.getItemAt(z), CoBoEndTime.getItemAt(z)); //change textDate to new tbx
+                            //Search the room table and check if the time slot exist
 
-                        ArrayList<String> TimeSlots = new ArrayList<>();
-                        ArrayList<String> Interviewers = new ArrayList<>();
-                        String sqlx = String.format("select timeSlots,Interviewers from room;");
-                        try {
-                            Statement sx = DBConnector.getConnection().createStatement();
-                            ResultSet rs = sx.executeQuery(sqlx);
-                            while (rs.next()) {
-                                TimeSlots.add(rs.getString(1));
-                                Interviewers.add(rs.getString(2));
-                            }
-                        } catch (SQLException sqle) {
-                            sqle.printStackTrace();
-                        }
-                        if (TimeSlots.contains(timeSlot)) {
-                            String[] InterviewersList = Interviewers.get(TimeSlots.indexOf(timeSlot)).split(",");
-                            boolean dup = false;
-                            for (int i = 0; i < InterviewersList.length; i++) {
-                                if (InterviewersList[i].equals(e.getId())) {
-                                    dup = true;
-                                }
-                            }
-                            if (dup) {
-                                JOptionPane.showMessageDialog(this, "You already selected this time.", "Warning", JOptionPane.WARNING_MESSAGE);
-                            } else {
-                                String sql = String.format("update room  set room.Interviewers='%s' where TimeSlots= '%s' ;", String.format("%s,%s", Interviewers.get(TimeSlots.indexOf(timeSlot)), e.getId()), timeSlot);
-                                try {
-                                    Statement s = DBConnector.getConnection().createStatement();
-                                    s.executeUpdate(sql);
-                                } catch (SQLException sqle) {
-                                    sqle.printStackTrace();
-                                }
-                            }
-
-                        } else {
-
-                            String sql = String.format("insert into room values\n" + "(\"%s\",null,\"%s\");", timeSlot, e.getId());
+                            ArrayList<String> TimeSlots = new ArrayList<>();
+                            ArrayList<String> Interviewers = new ArrayList<>();
+                            String sqlx = String.format("select timeSlots,Interviewers from room;");
                             try {
-                                Statement s = DBConnector.getConnection().createStatement();
-                                s.executeUpdate(sql);
+                                Statement sx = DBConnector.getConnection().createStatement();
+                                ResultSet rs = sx.executeQuery(sqlx);
+                                while (rs.next()) {
+                                    TimeSlots.add(rs.getString(1));
+                                    Interviewers.add(rs.getString(2));
+                                }
                             } catch (SQLException sqle) {
                                 sqle.printStackTrace();
                             }
+                            if (TimeSlots.contains(timeSlot)) {
+                                String[] InterviewersList = Interviewers.get(TimeSlots.indexOf(timeSlot)).split(",");
+                                boolean dup = false;
+                                for (int i = 0; i < InterviewersList.length; i++) {
+                                    if (InterviewersList[i].equals(e.getId())) {
+                                        dup = true;
+                                    }
+                                }
+                                if (dup) {
+                                    JOptionPane.showMessageDialog(this, "You already selected this time.", "Warning", JOptionPane.WARNING_MESSAGE);
+                                } else {
+//                                String sql = String.format("update room  set room.Interviewers='%s' where TimeSlots= '%s' ;", String.format("%s,%s", Interviewers.get(TimeSlots.indexOf(timeSlot)), e.getId()), timeSlot);
+//                                try {
+//                                    Statement s = DBConnector.getConnection().createStatement();
+//                                    s.executeUpdate(sql);
+//                                } catch (SQLException sqle) {
+//                                    sqle.printStackTrace();
+//                                }
+
+                                    e.uploadAvailabilityWithOtherInterviewers(String.format("%s,%s", Interviewers.get(TimeSlots.indexOf(timeSlot)), e.getId()), timeSlot);
+                                }
+
+                            } else {
+
+//                            String sql = String.format("insert into room values\n" + "(\"%s\",null,\"%s\");", timeSlot, e.getId());
+//                            try {
+//                                Statement s = DBConnector.getConnection().createStatement();
+//                                s.executeUpdate(sql);
+//                            } catch (SQLException sqle) {
+//                                sqle.printStackTrace();
+//                            }
+                                e.uploadAvailabilityFirstOne(timeSlot, e);
+                            }
+                            listModelOfAvailability.addElement(timeSlot);
                         }
-                        JOptionPane.showConfirmDialog(this, "Upload successfully", "Transaction", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE);
-                        listModelOfAvailability.addElement(timeSlot);
+                             JOptionPane.showConfirmDialog(this, "Upload successfully", "Transaction", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE);
                     }
+
+                    // </editor-fold>  
                 }
             } else {
                 JOptionPane.showMessageDialog(this, "Please Fill the date and select start time", "Warning", JOptionPane.WARNING_MESSAGE);
@@ -381,22 +396,23 @@ public class UploadAvailability extends javax.swing.JFrame {
                 while (rs.next()) {
                     if (StringUtils.isNullOrEmpty(rs.getString(1))) {
                         listModelOfAvailability.remove(index);
-                        String sqlx = String.format("delete from room where room.TimeSlots='%s';", timeSlot);
-                        Connection cnn1 = DBConnector.getConnection();
-                        try {
-                            Statement ss = cnn.createStatement();
-                            cnn1.setAutoCommit(false);
-                            ss.executeUpdate(sqlx);
-                            cnn.commit();
-                            
-                        } catch (SQLException sqle) {
-                            try {
-                                cnn.rollback();
-                            } catch (SQLException ex) {
-                                Logger.getLogger(ChooseInterviewTime.class.getName()).log(Level.SEVERE, null, ex);
-                            }
-                            sqle.printStackTrace();
-                        }
+//                        String sqlx = String.format("delete from room where room.TimeSlots='%s';", timeSlot);
+//                        Connection cnn1 = DBConnector.getConnection();
+//                        try {
+//                            Statement ss = cnn1.createStatement();
+//                            cnn1.setAutoCommit(false);
+//                            ss.executeUpdate(sqlx);
+//                            cnn1.commit();
+//
+//                        } catch (SQLException sqle) {
+//                            try {
+//                                cnn1.rollback();
+//                            } catch (SQLException ex) {
+//                                Logger.getLogger(ChooseInterviewTime.class.getName()).log(Level.SEVERE, null, ex);
+//                            }
+//                            sqle.printStackTrace();
+//                        }
+                        r.deleteTimeSlots(timeSlot);
                     } else {
                         JOptionPane.showMessageDialog(this, "An appointment exists on this timeslot. Please cancel that appointment first.", "Delete Error", JOptionPane.ERROR_MESSAGE);
                     }
