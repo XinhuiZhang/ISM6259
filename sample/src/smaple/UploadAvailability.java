@@ -337,6 +337,7 @@ public class UploadAvailability extends javax.swing.JFrame {
 //                                }
 
                                     e.uploadAvailabilityWithOtherInterviewers(String.format("%s,%s", Interviewers.get(TimeSlots.indexOf(timeSlot)), e.getId()), timeSlot);
+                               listModelOfAvailability.addElement(timeSlot);
                                 }
 
                             } else {
@@ -349,10 +350,13 @@ public class UploadAvailability extends javax.swing.JFrame {
 //                                sqle.printStackTrace();
 //                            }
                                 e.uploadAvailabilityFirstOne(timeSlot, e);
+                                listModelOfAvailability.addElement(timeSlot);
+                                
                             }
-                            listModelOfAvailability.addElement(timeSlot);
+                            
                         }
-                             JOptionPane.showConfirmDialog(this, "Upload successfully", "Transaction", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE);
+                        JOptionPane.showConfirmDialog(this, "Upload successfully", "Transaction", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE);
+                             
                     }
 
                     // </editor-fold>  
@@ -412,7 +416,7 @@ public class UploadAvailability extends javax.swing.JFrame {
 //                            }
 //                            sqle.printStackTrace();
 //                        }
-                        r.deleteTimeSlots(timeSlot);
+                        r.deleteTimeSlots(timeSlot,e.getId());
                     } else {
                         JOptionPane.showMessageDialog(this, "An appointment exists on this timeslot. Please cancel that appointment first.", "Delete Error", JOptionPane.ERROR_MESSAGE);
                     }

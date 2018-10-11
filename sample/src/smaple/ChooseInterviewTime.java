@@ -199,7 +199,7 @@ public class ChooseInterviewTime extends javax.swing.JFrame {
 //            }
             ErID=r.getInterviewersBySelectedTimeSlot(r.timeSlots.get(selectedTimeSlotIndex));
             // </editor-fold>  
-           // <editor-fold defaultstate="collapsed" desc="Made the appointment"> 
+          // <editor-fold defaultstate="collapsed" desc="Made the appointment"> 
 //            String[] ErIDList = ErID.split(",");
 //            String[] sqlThree = new String[ErIDList.length];
 //            for (int i = 0; i < ErIDList.length; i++) {
@@ -228,7 +228,8 @@ public class ChooseInterviewTime extends javax.swing.JFrame {
 //                }
 //                sqle.printStackTrace();
 //            }
-            e.ConfirmSelectedTimeSlots(ErID, AppoinmentID, selectedTimeSlot,e);
+
+            e.ConfirmSelectedTimeSlots(ErID, AppoinmentID, selectedTimeSlot);
             // </editor-fold>  
             Appointment apt = new Appointment(AppoinmentID, selectedTimeSlot);
             e.addAppointment(apt);

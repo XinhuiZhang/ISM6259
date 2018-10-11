@@ -107,12 +107,12 @@ public class Employee {
 
         ArrayList<String> lisTimeSlot = new ArrayList<>();
         for (int i = 0; i < appointments.size(); i++) {
-            String sql = String.format("Select TimeSlots from room where AppoinmentID =%s;", appointments.get(i).getAppointmentID());
+            String sql = String.format("Select TimeSlots, interviewee.EEID,Interviewers from room, interviewee where room.AppoinmentID=interviewee.AppoinmentID and room.AppoinmentID ='%s';", appointments.get(i).getAppointmentID());
             try {
                 Statement s = DBConnector.getConnection().createStatement();
                 ResultSet rs = s.executeQuery(sql);
                 while (rs.next()) {
-                    String InterviewTime = rs.getString(1);
+                    String InterviewTime = rs.getString(1)+"="+rs.getString(2)+"="+rs.getString(3);
                     lisTimeSlot.add(InterviewTime);
                 }
             } catch (SQLException sqle) {
@@ -139,16 +139,17 @@ public class Employee {
 
     }
 
-    public void ConfirmSelectedTimeSlots(String ErID, String AppoinmentID, String selectedTimeSlot, Employee e) {
+    public void ConfirmSelectedTimeSlots(String ErID, String AppoinmentID, String selectedTimeSlot) {
         String[] ErIDList = ErID.split(",");
         String[] sqlThree = new String[ErIDList.length];
         for (int i = 0; i < ErIDList.length; i++) {
+
             sqlThree[i] = String.format("insert into interviewerTeam values ('%s','%s'); ", ErIDList[i], AppoinmentID);
         }
         String[] sql = new String[3];
-        sql[0] = String.format("update room set room.AppoinmentID='%s' where TimeSlots='%s';", AppoinmentID, selectedTimeSlot);
-        sql[1] = String.format("insert into Appointment values('%s')", AppoinmentID);
-        sql[2] = String.format("update interviewee set AppoinmentID='%s' where EEID='%s';", AppoinmentID, e.getId());
+        sql[0] = String.format("insert into Appointment values('%s')", AppoinmentID);
+        sql[1] = String.format("update room set room.AppoinmentID='%s' where TimeSlots='%s';", AppoinmentID, selectedTimeSlot);
+        sql[2] = String.format("update interviewee set AppoinmentID='%s' where EEID='%s';", AppoinmentID, this.getId());
         Connection cnn = DBConnector.getConnection();
         try {
             Statement s = cnn.createStatement();
@@ -168,6 +169,8 @@ public class Employee {
             }
             sqle.printStackTrace();
         }
+        
+
 
     }
 
@@ -214,6 +217,8 @@ public class Employee {
             }
             sqle.printStackTrace();
         }
+        
+        
         return ApID;
     }
         public void uploadAvailabilityWithOtherInterviewers(String interviewer, String timeSlot) {

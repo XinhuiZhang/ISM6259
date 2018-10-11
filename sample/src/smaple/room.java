@@ -86,23 +86,66 @@ public class room {
         return timeSlots;
     }
 
-    public void deleteTimeSlots(String timeSlot) {
-        String sqlx = String.format("delete from room where room.TimeSlots='%s';", timeSlot);
-        Connection cnn1 = DBConnector.getConnection();
-        try {
-            Statement ss = cnn1.createStatement();
-            cnn1.setAutoCommit(false);
-            ss.executeUpdate(sqlx);
-            cnn1.commit();
+    public void deleteTimeSlots(String timeSlot, String erid) {
 
-        } catch (SQLException sqle) {
-            try {
-                cnn1.rollback();
-            } catch (SQLException ex) {
-                Logger.getLogger(ChooseInterviewTime.class.getName()).log(Level.SEVERE, null, ex);
+        String interviewers = "";
+        String sql = String.format("Select Interviewers from room where room.TimeSlots='%s';", timeSlot);
+        Connection cnn = DBConnector.getConnection();
+        try {
+            Statement s = DBConnector.getConnection().createStatement();
+            ResultSet rs = s.executeQuery(sql);
+            while (rs.next()) {
+                interviewers = rs.getString(1);
             }
+        } catch (SQLException sqle) {
             sqle.printStackTrace();
         }
-    }
 
+        String[] interviewersArray = interviewers.split(",");
+        if (interviewersArray.length <= 1) {
+
+            String sqlx = String.format("delete from room where room.TimeSlots='%s';", timeSlot);
+            Connection cnn1 = DBConnector.getConnection();
+            try {
+                Statement ss = cnn1.createStatement();
+                cnn1.setAutoCommit(false);
+                ss.executeUpdate(sqlx);
+                cnn1.commit();
+
+            } catch (SQLException sqle) {
+                try {
+                    cnn1.rollback();
+                } catch (SQLException ex) {
+                    Logger.getLogger(ChooseInterviewTime.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                sqle.printStackTrace();
+            }
+        } else {
+            String ers="";
+            for (int ind=0;ind<interviewersArray.length;ind++){
+                if(interviewersArray[ind].equals(erid)){}else{
+                ers+=interviewersArray[ind]+",";
+                }
+            
+            }
+
+            String sqlx = String.format("update room set interviewers='%s' where room.TimeSlots='%s';",ers, timeSlot);
+            Connection cnn1 = DBConnector.getConnection();
+            try {
+                Statement ss = cnn1.createStatement();
+                cnn1.setAutoCommit(false);
+                ss.executeUpdate(sqlx);
+                cnn1.commit();
+
+            } catch (SQLException sqle) {
+                try {
+                    cnn1.rollback();
+                } catch (SQLException ex) {
+                    Logger.getLogger(ChooseInterviewTime.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                sqle.printStackTrace();
+            }
+
+        }
+    }
 }
